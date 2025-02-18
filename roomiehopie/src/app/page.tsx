@@ -171,6 +171,10 @@ const App: React.FC = () => {
               <option value="Chinese">Chinese</option>
               <option value="Spanish">Spanish</option>
               <option value="Hindi">Hindi</option>
+              <option value="French">French</option>
+              <option value="Arabic">Arabic</option>
+              <option value="Korean">Korean</option>
+              <option value="Japanese">Japanese</option>
               <option value="No Preference">No Preference</option>
             </select>
           </div>
