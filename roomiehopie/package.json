@@ -11,13 +11,15 @@
   "dependencies": {
     "next": "^15.1.7",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "react-router-dom": "^7.1.5"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/react-router-dom": "^5.3.3",
     "eslint": "^9",
     "eslint-config-next": "15.1.7",
     "postcss": "^8",
