@@ -2,6 +2,9 @@
 
 import React, { useState } from "react";
 import MultiSelectCheckbox from "./MultiSelectCheckbox";
+import BioTextBox from "./BioTextBox"; // Adjust path if needed
+
+
 import { useRouter } from "next/navigation";
 
 interface FormData {
@@ -607,6 +610,10 @@ const App: React.FC = () => {
               <option value="Off-campus">Off-campus</option>
             </select>
             {errors.campus && <span className="text-red-500 text-sm">{errors.campus}</span>}
+          </div>
+
+          <div className="w-full px-4 mb-6 text-gray-600">
+            <BioTextBox /> {/* Set custom character limit */}
           </div>
 
           {/* Agreement Checkbox */}
