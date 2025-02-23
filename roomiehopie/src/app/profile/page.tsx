@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useProfile } from "../context/ProfileContext";
 
@@ -11,6 +11,11 @@ export default function ProfilePage() {
   const [tempName, setTempName] = useState(name);
   const [tempBio, setTempBio] = useState(bio);
   const [isLoading, setIsLoading] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // When a photo is uploaded, update the profile image immediately using a Data URL.
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -32,6 +37,10 @@ export default function ProfilePage() {
       window.location.reload();
     }, 3000);
   };
+
+  if (!mounted) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-orange-200 flex flex-col items-center justify-center p-6">
