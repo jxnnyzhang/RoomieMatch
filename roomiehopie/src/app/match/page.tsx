@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useProfile } from "../context/ProfileContext";
 
@@ -25,6 +25,11 @@ const sampleMatches = [
 export default function MatchPage() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const { profileImage } = useProfile();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handlePrevious = () => {
     setCurrentIndex((prev) =>
@@ -54,6 +59,10 @@ export default function MatchPage() {
   };
 
   const { name, matchPercent, bio } = sampleMatches[currentIndex];
+
+  if (!mounted) {
+    return null;
+  }
 
   return (
     <div className="relative min-h-screen bg-orange-200 flex flex-col items-center justify-center p-4">
