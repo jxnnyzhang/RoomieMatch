@@ -23,11 +23,11 @@ jobs:
 
       - name: Install dependencies
         run: npm install
-        working-directory: ./RoomieHopie
+        working-directory: ./roomiehopie
 
       - name: Build project
         run: npm run build
-        working-directory: ./RoomieHopie
+        working-directory: ./roomiehopie
 
       - name: Deploy to GitHub Pages
         if: github.ref == 'refs/heads/main'
