@@ -1,0 +1,29 @@
+# Site settings
+title: My Awesome Site
+description: >- # this means to ignore newlines until "baseurl:"
+  Your site's description goes here.
+baseurl: "" # the subpath of your site, e.g. /blog
+url: "https://jxnnyzhang.github.io" # the base hostname & protocol for your site
+
+# Build settings
+theme: minima
+
+# Custom settings
+author:
+  name: Jxnny Zhang
+  email: jxnny@example.com
+
+# Plugins
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+
+# Exclude these files from the site build
+exclude:
+  - README.md
+  - node_modules/
+  - vendor/
+
+# Enable GitHub Pages
+github:
+  is_project_page: true
