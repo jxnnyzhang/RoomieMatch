@@ -4,14 +4,14 @@ import { useState } from "react";
 export default function ProfilePage() {
   const [name, setName] = useState("");
   const [bio, setBio] = useState("");
-  const [image, setImage] = useState(null);
+  const [image, setImage] = useState<string | null>(null);
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setImage(reader.result);
+        setImage(reader.result as string);
       };
       reader.readAsDataURL(file);
     }
@@ -32,7 +32,11 @@ export default function ProfilePage() {
         <div className="flex flex-col items-center">
           <label className="w-24 h-24 rounded-full border-2 border-dashed border-gray-400 flex items-center justify-center overflow-hidden">
             {image ? (
-              <img src={image} alt="Profile" className="w-full h-full object-cover" />
+              <img
+                src={image}
+                alt="Profile"
+                className="w-full h-full object-cover"
+              />
             ) : (
               <span className="text-gray-500">No Photo</span>
             )}
@@ -43,7 +47,13 @@ export default function ProfilePage() {
               onChange={handleImageChange}
             />
           </label>
-          <button className="mt-2 px-3 py-1 bg-black text-white rounded" onClick={() => document.querySelector("input[type=file]").click()}>
+          <button
+            className="mt-2 px-3 py-1 bg-black text-white rounded"
+            onClick={() => {
+              const input = document.querySelector("input[type=file]") as HTMLInputElement;
+              input.click();
+            }}
+          >
             Upload Photo
           </button>
         </div>
@@ -53,13 +63,13 @@ export default function ProfilePage() {
           <input
             type="text"
             placeholder="Name"
-            className="w-full p-2 rounded border"
+            className="w-full p-2 rounded border text-gray-900"
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
           <textarea
             placeholder="Bio"
-            className="w-full p-2 rounded border mt-2"
+            className="w-full p-2 rounded border mt-2 text-gray-900"
             value={bio}
             onChange={(e) => setBio(e.target.value)}
           />
