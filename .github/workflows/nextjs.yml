@@ -23,15 +23,15 @@ jobs:
 
       - name: Install dependencies
         run: npm install
-        working-directory: ./RoomieMatch  # Ensure this matches your repository structure
+        working-directory: ./roomiehopie
 
       - name: Build project
         run: npm run build
-        working-directory: ./RoomieMatch  # Ensure this matches your repository structure
+        working-directory: ./roomiehopie
 
       - name: Deploy to GitHub Pages
         if: github.ref == 'refs/heads/main'
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./RoomieMatch/out  # Ensure this matches your repository structure
+          publish_dir: ./RoomieHopie/out
