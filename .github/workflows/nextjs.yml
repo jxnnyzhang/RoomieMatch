@@ -16,12 +16,11 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v3
         with:
-          node-version: "18"
+          node-version: '18'  # Updated to 18
 
-      # 1) Change into your roomiehopie folder to install and build
       - name: Install dependencies
         run: npm install
-        working-directory: roomiehopie
+        working-directory: roomiehopie  # If your project is in a subfolder
 
       - name: Build and Export
         run: |
@@ -29,7 +28,6 @@ jobs:
           npm run export
         working-directory: roomiehopie
 
-      # 2) Deploy the 'roomiehopie/out' folder
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
