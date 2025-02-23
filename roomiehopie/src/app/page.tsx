@@ -117,7 +117,7 @@ const App: React.FC = () => {
     const newErrors: Record<string, string> = {};
     if (!formData.gender.trim()) newErrors.gender = "Please fill this out";
     if (!formData.genderPreference.trim()) newErrors.genderPreference = "Please fill this out";
-    if (!formData.year.trim()) newErrors.year = "Please fill this out";
+    if (!formData.year.trim()) newErrors.year = "Please fill this out"; 
     if (!formData.sleepTime.trim()) newErrors.sleepTime = "Please fill this out";
     if (!formData.cleanliness.trim()) newErrors.cleanliness = "Please fill this out";
     if (!formData.noiseLevel.trim()) newErrors.noiseLevel = "Please fill this out";
@@ -610,10 +610,6 @@ const App: React.FC = () => {
               <option value="Off-campus">Off-campus</option>
             </select>
             {errors.campus && <span className="text-red-500 text-sm">{errors.campus}</span>}
-          </div>
-
-          <div className="w-full px-4 mb-6 text-gray-600">
-            <BioTextBox /> {/* Set custom character limit */}
           </div>
 
           {/* Agreement Checkbox */}
