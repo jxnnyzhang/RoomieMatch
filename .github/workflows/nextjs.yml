@@ -1,36 +1,35 @@
-name: Deploy to GitHub Pages
+name: Build and Deploy
 
 on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check out the repository
+      - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Set up Node
-        uses: actions/setup-node@v3
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
         with:
-          node-version: '18'  # Updated to 18
+          node-version: '18'
 
       - name: Install dependencies
         run: npm install
-        working-directory: roomiehopie  # If your project is in a subfolder
 
-      - name: Build and Export
-        run: |
-          npm run build
-          npm run export
-        working-directory: roomiehopie
+      - name: Build project
+        run: npm run build
 
       - name: Deploy to GitHub Pages
+        if: github.ref == 'refs/heads/main'
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: roomiehopie/out
-          publish_branch: gh-pages
+          publish_dir: ./out
