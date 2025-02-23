@@ -10,6 +10,9 @@
   },
   "dependencies": {
     "next": "^15.1.7",
+    "next-auth": "^4.24.11",
+    "passport": "^0.7.0",
+    "passport-cas": "^0.1.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-icons": "^5.5.0",
