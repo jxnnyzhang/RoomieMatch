@@ -1,0 +1,38 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+
+      # 1) Change into your roomiehopie folder to install and build
+      - name: Install dependencies
+        run: npm install
+        working-directory: roomiehopie
+
+      - name: Build and Export
+        run: |
+          npm run build
+          npm run export
+        working-directory: roomiehopie
+
+      # 2) Deploy the 'roomiehopie/out' folder
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: roomiehopie/out
+          publish_branch: gh-pages
