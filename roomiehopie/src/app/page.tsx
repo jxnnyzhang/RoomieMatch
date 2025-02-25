@@ -121,6 +121,9 @@ const App: React.FC = () => {
   // Validate all fields and return an errors object.
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
+    if (!formData.firstName.trim()) newErrors.firstName = "Please fill this out";
+    if (!formData.lastName.trim()) newErrors.lastName = "Please fill this out";
+    if (!formData.email.trim()) newErrors.email = "Please fill this out";
     if (!formData.gender.trim()) newErrors.gender = "Please fill this out";
     if (!formData.genderPreference.trim()) newErrors.genderPreference = "Please fill this out";
     if (!formData.year.trim()) newErrors.year = "Please fill this out"; 
@@ -202,12 +205,12 @@ const App: React.FC = () => {
             <RequiredLabel text="Email" />
             <input
               type="text"
-              name="Email"
-              value={formData.lastName}
+              name="email"
+              value={formData.email}
               onChange={handleChange}
               className="w-full border rounded p-2 text-gray-600"
             />
-            {errors.lastName && <span className="text-red-500 text-sm">{errors.lastName}</span>}
+            {errors.email && <span className="text-red-500 text-sm">{errors.email}</span>}
           </div>
 
           {/* Gender */}
