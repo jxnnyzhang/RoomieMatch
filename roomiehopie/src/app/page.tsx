@@ -2,12 +2,15 @@
 
 import React, { useState } from "react";
 import MultiSelectCheckbox from "./MultiSelectCheckbox";
-import BioTextBox from "./BioTextBox"; // Adjust path if needed
+
 
 
 import { useRouter } from "next/navigation";
 
 interface FormData {
+  firstName: string,
+  lastName: string,
+  email: string,
   gender: string;
   genderPreference: string;
   year: string;
@@ -46,6 +49,9 @@ const App: React.FC = () => {
   const router = useRouter();
 
   const [formData, setFormData] = useState<FormData>({
+    firstName: "",
+    lastName: "",
+    email: "",
     gender: "",
     genderPreference: "",
     year: "",
@@ -165,6 +171,45 @@ const App: React.FC = () => {
           Here is a brief survey for you to answer so we can find you your best match!
         </p>
         <form onSubmit={handleSubmit} className="flex flex-wrap -mx-4">
+          {/* First Name */}
+          <div className="w-full md:w-1/2 px-4 mb-6">
+            <RequiredLabel text="First Name" />
+            <input
+              type="text"
+              name="firstName"
+              value={formData.firstName}
+              onChange={handleChange}
+              className="w-full border rounded p-2 text-gray-600"
+            />
+            {errors.firstName && <span className="text-red-500 text-sm">{errors.firstName}</span>}
+          </div>
+
+          {/* Last Name */}
+          <div className="w-full md:w-1/2 px-4 mb-6">
+            <RequiredLabel text="Last Name" />
+            <input
+              type="text"
+              name="lastName"
+              value={formData.lastName}
+              onChange={handleChange}
+              className="w-full border rounded p-2 text-gray-600"
+            />
+            {errors.lastName && <span className="text-red-500 text-sm">{errors.lastName}</span>}
+          </div>
+
+           {/* Email */}
+           <div className="w-full md:w-1/2 px-4 mb-6">
+            <RequiredLabel text="Email" />
+            <input
+              type="text"
+              name="Email"
+              value={formData.lastName}
+              onChange={handleChange}
+              className="w-full border rounded p-2 text-gray-600"
+            />
+            {errors.lastName && <span className="text-red-500 text-sm">{errors.lastName}</span>}
+          </div>
+
           {/* Gender */}
           <div className="w-full md:w-1/2 px-4 mb-6">
             <RequiredLabel text="Gender" />
@@ -214,10 +259,50 @@ const App: React.FC = () => {
               <option value="">Select your year</option>
               <option value="Freshman">Incoming Freshman</option>
               <option value="Sophomore">Incoming Sophomore</option>
-              <option value="Junior">Incoming Junior</option>
-              <option value="Senior">Incoming Senior</option>
+              <option value="Junior">Incoming Upperclassman</option>
             </select>
             {errors.year && <span className="text-red-500 text-sm">{errors.year}</span>}
+          </div>
+
+          {/* Major Area */}
+          <div className="w-full md:w-1/2 px-4 mb-6">
+            <RequiredLabel text="Major Area" />
+            <select
+              name="major"
+              value={formData.major}
+              onChange={handleChange}
+              className="w-full border rounded p-2 text-gray-600"
+            >
+              <option value="">What area is your major in?</option>
+              <option value="Engineering">Engineering</option>
+              <option value="Humanities">Humanities</option>
+              <option value="Arts & Sciences">Arts & Sciences</option>
+              <option value="Business/Finance">Business/Finance</option>
+            </select>
+            {errors.major && <span className="text-red-500 text-sm">{errors.major}</span>}
+          </div>
+
+          {/* Preferred Roommate Major */}
+          <div className="w-full md:w-1/2 px-4 mb-6">
+            <RequiredLabel text="Preferred Roommate Major" />
+            <select
+              name="roommateMajor"
+              value={formData.roommateMajor}
+              onChange={handleChange}
+              className="w-full border rounded p-2 text-gray-600"
+            >
+              <option value="">
+                What major area would you prefer your roommate to have?
+              </option>
+              <option value="Engineering">Engineering</option>
+              <option value="Humanities">Humanities</option>
+              <option value="Arts & Sciences">Arts & Sciences</option>
+              <option value="Business/Finance">Business/Finance</option>
+              <option value="No Preference">No Preference</option>
+            </select>
+            {errors.roommateMajor && (
+              <span className="text-red-500 text-sm">{errors.roommateMajor}</span>
+            )}
           </div>
 
           {/* Sleep Time */}
@@ -233,7 +318,7 @@ const App: React.FC = () => {
               <option value="Before 10PM">Before 10PM</option>
               <option value="11PM - 12AM">11PM - 12AM</option>
               <option value="12AM - 2AM">12AM - 2AM</option>
-              <option value="After 2AM">After 2AM</option>
+              <option value="After 2AM">2AM or Later</option>
             </select>
             {errors.sleepTime && <span className="text-red-500 text-sm">{errors.sleepTime}</span>}
           </div>
@@ -288,13 +373,13 @@ const App: React.FC = () => {
               className="w-full border rounded p-2 text-gray-600"
             >
               <option value="">What religion do you identify as?</option>
-              <option value="Christian">Christian</option>
-              <option value="Muslim">Muslim</option>
+              <option value="Christian">Christianity</option>
+              <option value="Muslim">Islam</option>
               <option value="Judaism">Judaism</option>
               <option value="Hinduism">Hinduism</option>
               <option value="Sikhism">Sikhism</option>
               <option value="Buddhism">Buddhism</option>
-              <option value="Atheism/Agnostic">Atheism/Agnostic</option>
+              <option value="Atheism/Agnostic">Atheism/Agnosticism</option>
               <option value="Other">Other</option>
             </select>
             {errors.religion && <span className="text-red-500 text-sm">{errors.religion}</span>}
@@ -511,11 +596,9 @@ const App: React.FC = () => {
               onChange={handleChange}
               className="w-full border rounded p-2 text-gray-600"
             >
-              <option value="">Do you have a preference for your roommate's pet?</option>
-              <option value="Dog">Dog</option>
-              <option value="Cat">Cat</option>
-              <option value="Other">Other</option>
-              <option value="None">None</option>
+              <option value="">Are you okay with having a pet in the dorm?</option>
+              <option value="Yes">Yes</option>
+              <option value="No">No</option>
             </select>
             {errors.petPreference && (
               <span className="text-red-500 text-sm">{errors.petPreference}</span>
@@ -540,45 +623,20 @@ const App: React.FC = () => {
             {errors.guests && <span className="text-red-500 text-sm">{errors.guests}</span>}
           </div>
 
-          {/* Major Area */}
-          <div className="w-full md:w-1/2 px-4 mb-6">
-            <RequiredLabel text="Major Area" />
+           {/* Campus */}
+           <div className="w-full md:w-1/2 px-4 mb-6">
+            <RequiredLabel text="On/Off Campus" />
             <select
-              name="major"
-              value={formData.major}
+              name="campus"
+              value={formData.campus}
               onChange={handleChange}
               className="w-full border rounded p-2 text-gray-600"
             >
-              <option value="">What area is your major in?</option>
-              <option value="Engineering">Engineering</option>
-              <option value="Humanities">Humanities</option>
-              <option value="Arts & Sciences">Arts & Sciences</option>
-              <option value="Business/Finance">Business/Finance</option>
+              <option value="">Do you plan on living off or on campus?</option>
+              <option value="On-campus">On-campus</option>
+              <option value="Off-campus">Off-campus</option>
             </select>
-            {errors.major && <span className="text-red-500 text-sm">{errors.major}</span>}
-          </div>
-
-          {/* Preferred Roommate Major */}
-          <div className="w-full md:w-1/2 px-4 mb-6">
-            <RequiredLabel text="Preferred Roommate Major" />
-            <select
-              name="roommateMajor"
-              value={formData.roommateMajor}
-              onChange={handleChange}
-              className="w-full border rounded p-2 text-gray-600"
-            >
-              <option value="">
-                What major area would you prefer your roommate to have?
-              </option>
-              <option value="Engineering">Engineering</option>
-              <option value="Humanities">Humanities</option>
-              <option value="Arts & Sciences">Arts & Sciences</option>
-              <option value="Business/Finance">Business/Finance</option>
-              <option value="No Preference">No Preference</option>
-            </select>
-            {errors.roommateMajor && (
-              <span className="text-red-500 text-sm">{errors.roommateMajor}</span>
-            )}
+            {errors.campus && <span className="text-red-500 text-sm">{errors.campus}</span>}
           </div>
 
           {/* Hobbies */}
@@ -596,21 +654,6 @@ const App: React.FC = () => {
             </p>
           </div>
 
-          {/* Campus */}
-          <div className="w-full md:w-1/2 px-4 mb-6">
-            <RequiredLabel text="On/Off Campus" />
-            <select
-              name="campus"
-              value={formData.campus}
-              onChange={handleChange}
-              className="w-full border rounded p-2 text-gray-600"
-            >
-              <option value="">Do you plan on living off or on campus?</option>
-              <option value="On-campus">On-campus</option>
-              <option value="Off-campus">Off-campus</option>
-            </select>
-            {errors.campus && <span className="text-red-500 text-sm">{errors.campus}</span>}
-          </div>
 
           {/* Agreement Checkbox */}
           <div className="w-full px-4 flex items-center mb-6">
@@ -622,7 +665,7 @@ const App: React.FC = () => {
               className="mr-2"
             />
             <label className="text-sm text-gray-700">
-              I agree to let us share your answers <span className="text-red-500">*</span>
+              I agree to share my answers to help find the best match <span className="text-red-500">*</span>
             </label>
             {errors.agree && <span className="text-red-500 text-sm ml-2">{errors.agree}</span>}
           </div>
