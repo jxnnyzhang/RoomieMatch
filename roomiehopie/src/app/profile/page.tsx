@@ -76,7 +76,7 @@ export default function ProfilePage() {
           </h1>
           <div className="w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden mb-4">
             {profileImage ? (
-              <img
+              <img suppressHydrationWarning={true}
                 src={profileImage}
                 alt="Profile Preview"
                 className="object-cover w-full h-full"
