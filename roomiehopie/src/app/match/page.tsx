@@ -70,8 +70,7 @@ export default function MatchPage() {
       <Link href="/profile">
         <div className="absolute top-4 right-4 bg-white p-2 sm:p-3 rounded-full shadow-lg cursor-pointer hover:bg-gray-100 transition">
           {profileImage ? (
-            <img
-              src={profileImage}
+            <img suppressHydrationWarning={true} src={profileImage}
               alt="Profile"
               className="w-10 h-10 sm:w-10 sm:h-10 rounded-full object-cover"
             />
