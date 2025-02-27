@@ -398,10 +398,17 @@ const App: React.FC = () => {
               className="w-full border rounded p-2 text-gray-600"
             >
               <option value="">
-                Do you prefer to room with somebody of the same religion?
+                Do you have a preference for what your roommate's religion should be?
               </option>
-              <option value="Yes">Yes</option>
-              <option value="No">No</option>
+              <option value="Christian">Christianity</option>
+              <option value="Muslim">Islam</option>
+              <option value="Judaism">Judaism</option>
+              <option value="Hinduism">Hinduism</option>
+              <option value="Sikhism">Sikhism</option>
+              <option value="Buddhism">Buddhism</option>
+              <option value="Atheism/Agnostic">Atheism/Agnosticism</option>
+              <option value="Other">Other</option>
+              <option value="None">No Preference</option>
             </select>
             {errors.religionPreferences && (
               <span className="text-red-500 text-sm">{errors.religionPreferences}</span>
