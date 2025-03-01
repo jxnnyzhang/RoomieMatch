@@ -153,16 +153,39 @@ const App: React.FC = () => {
     return newErrors;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const formErrors = validateForm();
-    if (Object.keys(formErrors).length > 0) {
-      setErrors(formErrors);
-    } else {
-      console.log("Form Data Submitted:", formData);
+  // handleSubmit:
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  const formErrors = validateForm();
+  if (Object.keys(formErrors).length > 0) {
+    setErrors(formErrors);
+  } else {
+    try {
+      // 1) POST the form data to our new route
+      const res = await fetch("/api/survey", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      // 2) Check for success
+      if (!res.ok) {
+        throw new Error("Failed to save survey data");
+      }
+      const result = await res.json();
+      if (!result.success) {
+        throw new Error(result.error || "Unknown error");
+      }
+
+      // 3) If successful, go to /match or show a success message
       router.push("/match");
+    } catch (error) {
+      console.error("Error submitting survey:", error);
+      // Show an error message to the user if you like
     }
-  };
+  }
+};
+
 
   return (
     <div className="flex justify-center items-start min-h-screen bg-orange-200 py-10">
