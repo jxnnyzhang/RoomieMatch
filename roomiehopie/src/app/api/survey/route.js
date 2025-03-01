@@ -1,6 +1,5 @@
-// roomiehopie/src/app/api/survey/route.js
-
 import { NextResponse } from "next/server";
+/*
 import sqlite3 from "sqlite3";
 import { open } from "sqlite";
 
@@ -11,7 +10,7 @@ async function openDB() {
     driver: sqlite3.Database,
   });
 }
-
+*/
 export async function POST(request) {
   try {
     // Parse the incoming JSON data
