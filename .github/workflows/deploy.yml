@@ -1,4 +1,4 @@
-name: Deploy Next.js Site to GitHub Pages
+name: Build and Deploy
 
 on:
   push:
@@ -10,13 +10,12 @@ permissions:
   pages: write
   id-token: write
 
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
-
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./roomiehopie
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -26,40 +25,31 @@ jobs:
         with:
           node-version: "20"
           cache: npm
-          # Use the package-lock.json inside roomiehopie for dependency caching.
-          cache-dependency-path: roomiehopie/package-lock.json
+          cache-dependency-path: package-lock.json
 
       - name: Install dependencies
-        working-directory: roomiehopie
         run: npm ci
 
-      - name: Build Next.js app (static export)
-        working-directory: roomiehopie
-        run: npx next build
-        # With `output: "export"` set in next.config.js, the build output is automatically exported
-        # to the default folder "out" (inside roomiehopie).
+      - name: Build and Export Next.js app
+        run: |
+          npm run build
+          # Next.js will output to the 'out' folder (as defined in next.config.js)
+          # Optionally, ensure the .nojekyll file exists to bypass Jekyll processing:
+          mkdir -p out && touch out/.nojekyll
 
-      - name: Move export folder to repository root
-        run: mv roomiehopie/out .
-
-      - name: Create .nojekyll file in export directory
-        run: touch out/.nojekyll
-
-      - name: Upload artifact for deployment
-        uses: actions/upload-pages-artifact@v3
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v1
         with:
           path: out
 
   deploy:
-    runs-on: ubuntu-latest
     needs: build
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
     steps:
-      - name: Download artifact
-        uses: actions/download-pages-artifact@v3
-
+      - name: Download Pages artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: pages
       - name: Deploy to GitHub Pages
-        id: deployment
         uses: actions/deploy-pages@v4
+        id: deployment
