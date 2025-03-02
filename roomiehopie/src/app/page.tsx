@@ -451,8 +451,12 @@ const handleSubmit = async (e: React.FormEvent) => {
               <option value="English">English</option>
               <option value="Chinese">Chinese</option>
               <option value="Spanish">Spanish</option>
-              <option value="Hindi">Hindi</option>
-              <option value="No Preference">No Preference</option>
+              <option value="French">French</option>
+              <option value="Hindi">Hindi</option>              
+              <option value="Japanese">Japanese</option>
+              <option value="Korean">Korean</option>
+              <option value="Italian">Italian</option>
+              <option value="Other">Other</option>
             </select>
             {errors.languagePreferences && (
               <span className="text-red-500 text-sm">{errors.languagePreferences}</span>
