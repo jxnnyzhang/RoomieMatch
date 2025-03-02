@@ -2,15 +2,12 @@
 
 import React, { useState } from "react";
 import MultiSelectCheckbox from "./MultiSelectCheckbox";
-
-
-
 import { useRouter } from "next/navigation";
 
 interface FormData {
-  firstName: string,
-  lastName: string,
-  email: string,
+  firstName: string;
+  lastName: string;
+  email: string;
   gender: string;
   genderPreference: string;
   year: string;
@@ -82,7 +79,14 @@ const App: React.FC = () => {
   // This state holds error messages for each field.
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const hobbiesOptions = ["Sports", "Music", "Gaming", "Cooking", "Reading", "Traveling"];
+  const hobbiesOptions = [
+    "Sports",
+    "Music",
+    "Gaming",
+    "Cooking",
+    "Reading",
+    "Traveling",
+  ];
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -103,7 +107,6 @@ const App: React.FC = () => {
     }
   };
 
-
   const handleHobbiesChange = (selected: string[]) => {
     setFormData((prev) => ({
       ...prev,
@@ -121,71 +124,100 @@ const App: React.FC = () => {
   // Validate all fields and return an errors object.
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
-    if (!formData.firstName.trim()) newErrors.firstName = "Please fill this out";
-    if (!formData.lastName.trim()) newErrors.lastName = "Please fill this out";
-    if (!formData.email.trim()) newErrors.email = "Please fill this out";
+    if (!formData.firstName.trim())
+      newErrors.firstName = "Please fill this out";
+    if (!formData.lastName.trim())
+      newErrors.lastName = "Please fill this out";
+    if (!formData.email.trim()) {
+      newErrors.email = "Please fill this out";
+    } else if (
+      !formData.email.trim().toLowerCase().endsWith("@case.edu")
+    ) {
+      newErrors.email = "Email must end in @case.edu";
+    }
     if (!formData.gender.trim()) newErrors.gender = "Please fill this out";
-    if (!formData.genderPreference.trim()) newErrors.genderPreference = "Please fill this out";
-    if (!formData.year.trim()) newErrors.year = "Please fill this out"; 
-    if (!formData.sleepTime.trim()) newErrors.sleepTime = "Please fill this out";
-    if (!formData.cleanliness.trim()) newErrors.cleanliness = "Please fill this out";
-    if (!formData.noiseLevel.trim()) newErrors.noiseLevel = "Please fill this out";
-    if (!formData.religion.trim()) newErrors.religion = "Please fill this out";
-    if (!formData.religionPreferences.trim()) newErrors.religionPreferences = "Please fill this out";
-    if (!formData.languagePreferences.trim()) newErrors.languagePreferences = "Please fill this out";
-    if (!formData.smoking.trim()) newErrors.smoking = "Please fill this out";
-    if (!formData.smokingPreference.trim()) newErrors.smokingPreference = "Please fill this out";
-    if (!formData.drinking.trim()) newErrors.drinking = "Please fill this out";
-    if (!formData.drinkingPreference.trim()) newErrors.drinkingPreference = "Please fill this out";
-    if (!formData.cooking.trim()) newErrors.cooking = "Please fill this out";
-    if (!formData.greekLife.trim()) newErrors.greekLife = "Please fill this out";
-    if (!formData.politics.trim()) newErrors.politics = "Please fill this out";
-    if (!formData.roommatePolitics.trim()) newErrors.roommatePolitics = "Please fill this out";
-    if (!formData.pets.trim()) newErrors.pets = "Please fill this out";
-    if (!formData.petPreference.trim()) newErrors.petPreference = "Please fill this out";
-    if (!formData.guests.trim()) newErrors.guests = "Please fill this out";
-    if (!formData.major.trim()) newErrors.major = "Please fill this out";
-    if (!formData.roommateMajor.trim()) newErrors.roommateMajor = "Please fill this out";
-    if (formData.hobbies.length === 0) newErrors.hobbies = "Please select at least one";
-    if (!formData.campus.trim()) newErrors.campus = "Please fill this out";
+    if (!formData.genderPreference.trim())
+      newErrors.genderPreference = "Please fill this out";
+    if (!formData.year.trim()) newErrors.year = "Please fill this out";
+    if (!formData.sleepTime.trim())
+      newErrors.sleepTime = "Please fill this out";
+    if (!formData.cleanliness.trim())
+      newErrors.cleanliness = "Please fill this out";
+    if (!formData.noiseLevel.trim())
+      newErrors.noiseLevel = "Please fill this out";
+    if (!formData.religion.trim())
+      newErrors.religion = "Please fill this out";
+    if (!formData.religionPreferences.trim())
+      newErrors.religionPreferences = "Please fill this out";
+    if (!formData.languagePreferences.trim())
+      newErrors.languagePreferences = "Please fill this out";
+    if (!formData.smoking.trim())
+      newErrors.smoking = "Please fill this out";
+    if (!formData.smokingPreference.trim())
+      newErrors.smokingPreference = "Please fill this out";
+    if (!formData.drinking.trim())
+      newErrors.drinking = "Please fill this out";
+    if (!formData.drinkingPreference.trim())
+      newErrors.drinkingPreference = "Please fill this out";
+    if (!formData.cooking.trim())
+      newErrors.cooking = "Please fill this out";
+    if (!formData.greekLife.trim())
+      newErrors.greekLife = "Please fill this out";
+    if (!formData.politics.trim())
+      newErrors.politics = "Please fill this out";
+    if (!formData.roommatePolitics.trim())
+      newErrors.roommatePolitics = "Please fill this out";
+    if (!formData.pets.trim())
+      newErrors.pets = "Please fill this out";
+    if (!formData.petPreference.trim())
+      newErrors.petPreference = "Please fill this out";
+    if (!formData.guests.trim())
+      newErrors.guests = "Please fill this out";
+    if (!formData.major.trim())
+      newErrors.major = "Please fill this out";
+    if (!formData.roommateMajor.trim())
+      newErrors.roommateMajor = "Please fill this out";
+    if (formData.hobbies.length === 0)
+      newErrors.hobbies = "Please select at least one";
+    if (!formData.campus.trim())
+      newErrors.campus = "Please fill this out";
     if (!formData.agree) newErrors.agree = "Please agree to the terms";
 
     return newErrors;
   };
 
   // handleSubmit:
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  const formErrors = validateForm();
-  if (Object.keys(formErrors).length > 0) {
-    setErrors(formErrors);
-  } else {
-    try {
-      // 1) POST the form data to our new route
-      const res = await fetch("/api/survey", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const formErrors = validateForm();
+    if (Object.keys(formErrors).length > 0) {
+      setErrors(formErrors);
+    } else {
+      try {
+        // 1) POST the form data to our new route
+        const res = await fetch("/api/survey", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData),
+        });
 
-      // 2) Check for success
-      if (!res.ok) {
-        throw new Error("Failed to save survey data");
-      }
-      const result = await res.json();
-      if (!result.success) {
-        throw new Error(result.error || "Unknown error");
-      }
+        // 2) Check for success
+        if (!res.ok) {
+          throw new Error("Failed to save survey data");
+        }
+        const result = await res.json();
+        if (!result.success) {
+          throw new Error(result.error || "Unknown error");
+        }
 
-      // 3) If successful, go to /match or show a success message
-      router.push("/match");
-    } catch (error) {
-      console.error("Error submitting survey:", error);
-      // Show an error message to the user if you like
+        // 3) If successful, go to /match or show a success message
+        router.push("/match");
+      } catch (error) {
+        console.error("Error submitting survey:", error);
+        // Show an error message to the user if you like
+      }
     }
-  }
-};
-
+  };
 
   return (
     <div className="flex justify-center items-start min-h-screen bg-orange-200 py-10">
@@ -194,7 +226,8 @@ const handleSubmit = async (e: React.FormEvent) => {
           Welcome, XXX!
         </h2>
         <p className="mb-8 text-gray-600 text-center">
-          Here is a brief survey for you to answer so we can find you your best match!
+          Here is a brief survey for you to answer so we can find you your best
+          match!
         </p>
         <form onSubmit={handleSubmit} className="flex flex-wrap -mx-4">
           {/* First Name */}
@@ -207,7 +240,9 @@ const handleSubmit = async (e: React.FormEvent) => {
               onChange={handleChange}
               className="w-full border rounded p-2 text-gray-600"
             />
-            {errors.firstName && <span className="text-red-500 text-sm">{errors.firstName}</span>}
+            {errors.firstName && (
+              <span className="text-red-500 text-sm">{errors.firstName}</span>
+            )}
           </div>
 
           {/* Last Name */}
@@ -220,11 +255,13 @@ const handleSubmit = async (e: React.FormEvent) => {
               onChange={handleChange}
               className="w-full border rounded p-2 text-gray-600"
             />
-            {errors.lastName && <span className="text-red-500 text-sm">{errors.lastName}</span>}
+            {errors.lastName && (
+              <span className="text-red-500 text-sm">{errors.lastName}</span>
+            )}
           </div>
 
-           {/* Email */}
-           <div className="w-full md:w-1/2 px-4 mb-6">
+          {/* Email */}
+          <div className="w-full md:w-1/2 px-4 mb-6">
             <RequiredLabel text="Email" />
             <input
               type="text"
@@ -233,7 +270,9 @@ const handleSubmit = async (e: React.FormEvent) => {
               onChange={handleChange}
               className="w-full border rounded p-2 text-gray-600"
             />
-            {errors.email && <span className="text-red-500 text-sm">{errors.email}</span>}
+            {errors.email && (
+              <span className="text-red-500 text-sm">{errors.email}</span>
+            )}
           </div>
 
           {/* Gender */}
@@ -250,7 +289,9 @@ const handleSubmit = async (e: React.FormEvent) => {
               <option value="Male">Male</option>
               <option value="Other">Other</option>
             </select>
-            {errors.gender && <span className="text-red-500 text-sm">{errors.gender}</span>}
+            {errors.gender && (
+              <span className="text-red-500 text-sm">{errors.gender}</span>
+            )}
           </div>
 
           {/* Gender Preference */}
@@ -269,7 +310,9 @@ const handleSubmit = async (e: React.FormEvent) => {
               <option value="No Preference">No Preference</option>
             </select>
             {errors.genderPreference && (
-              <span className="text-red-500 text-sm">{errors.genderPreference}</span>
+              <span className="text-red-500 text-sm">
+                {errors.genderPreference}
+              </span>
             )}
           </div>
 
@@ -287,7 +330,9 @@ const handleSubmit = async (e: React.FormEvent) => {
               <option value="Sophomore">Incoming Sophomore</option>
               <option value="Junior">Incoming Upperclassman</option>
             </select>
-            {errors.year && <span className="text-red-500 text-sm">{errors.year}</span>}
+            {errors.year && (
+              <span className="text-red-500 text-sm">{errors.year}</span>
+            )}
           </div>
 
           {/* Major Area */}
@@ -305,7 +350,9 @@ const handleSubmit = async (e: React.FormEvent) => {
               <option value="Arts & Sciences">Arts & Sciences</option>
               <option value="Business/Finance">Business/Finance</option>
             </select>
-            {errors.major && <span className="text-red-500 text-sm">{errors.major}</span>}
+            {errors.major && (
+              <span className="text-red-500 text-sm">{errors.major}</span>
+            )}
           </div>
 
           {/* Preferred Roommate Major */}
@@ -327,7 +374,9 @@ const handleSubmit = async (e: React.FormEvent) => {
               <option value="No Preference">No Preference</option>
             </select>
             {errors.roommateMajor && (
-              <span className="text-red-500 text-sm">{errors.roommateMajor}</span>
+              <span className="text-red-500 text-sm">
+                {errors.roommateMajor}
+              </span>
             )}
           </div>
 
@@ -346,7 +395,9 @@ const handleSubmit = async (e: React.FormEvent) => {
               <option value="12AM - 2AM">12AM - 2AM</option>
               <option value="After 2AM">2AM or Later</option>
             </select>
-            {errors.sleepTime && <span className="text-red-500 text-sm">{errors.sleepTime}</span>}
+            {errors.sleepTime && (
+              <span className="text-red-500 text-sm">{errors.sleepTime}</span>
+            )}
           </div>
 
           {/* Cleanliness */}
@@ -408,7 +459,9 @@ const handleSubmit = async (e: React.FormEvent) => {
               <option value="Atheism/Agnostic">Atheism/Agnosticism</option>
               <option value="Other">Other</option>
             </select>
-            {errors.religion && <span className="text-red-500 text-sm">{errors.religion}</span>}
+            {errors.religion && (
+              <span className="text-red-500 text-sm">{errors.religion}</span>
+            )}
           </div>
 
           {/* Religious Preference */}
@@ -434,7 +487,9 @@ const handleSubmit = async (e: React.FormEvent) => {
               <option value="None">No Preference</option>
             </select>
             {errors.religionPreferences && (
-              <span className="text-red-500 text-sm">{errors.religionPreferences}</span>
+              <span className="text-red-500 text-sm">
+                {errors.religionPreferences}
+              </span>
             )}
           </div>
 
@@ -452,14 +507,16 @@ const handleSubmit = async (e: React.FormEvent) => {
               <option value="Chinese">Chinese</option>
               <option value="Spanish">Spanish</option>
               <option value="French">French</option>
-              <option value="Hindi">Hindi</option>              
+              <option value="Hindi">Hindi</option>
               <option value="Japanese">Japanese</option>
               <option value="Korean">Korean</option>
               <option value="Italian">Italian</option>
               <option value="Other">Other</option>
             </select>
             {errors.languagePreferences && (
-              <span className="text-red-500 text-sm">{errors.languagePreferences}</span>
+              <span className="text-red-500 text-sm">
+                {errors.languagePreferences}
+              </span>
             )}
           </div>
 
@@ -476,7 +533,9 @@ const handleSubmit = async (e: React.FormEvent) => {
               <option value="Yes">Yes</option>
               <option value="No">No</option>
             </select>
-            {errors.smoking && <span className="text-red-500 text-sm">{errors.smoking}</span>}
+            {errors.smoking && (
+              <span className="text-red-500 text-sm">{errors.smoking}</span>
+            )}
           </div>
 
           {/* Smoking Preference */}
@@ -493,7 +552,9 @@ const handleSubmit = async (e: React.FormEvent) => {
               <option value="No">No</option>
             </select>
             {errors.smokingPreference && (
-              <span className="text-red-500 text-sm">{errors.smokingPreference}</span>
+              <span className="text-red-500 text-sm">
+                {errors.smokingPreference}
+              </span>
             )}
           </div>
 
@@ -510,7 +571,9 @@ const handleSubmit = async (e: React.FormEvent) => {
               <option value="Yes">Yes</option>
               <option value="No">No</option>
             </select>
-            {errors.drinking && <span className="text-red-500 text-sm">{errors.drinking}</span>}
+            {errors.drinking && (
+              <span className="text-red-500 text-sm">{errors.drinking}</span>
+            )}
           </div>
 
           {/* Drinking Preference */}
@@ -527,7 +590,9 @@ const handleSubmit = async (e: React.FormEvent) => {
               <option value="No">No</option>
             </select>
             {errors.drinkingPreference && (
-              <span className="text-red-500 text-sm">{errors.drinkingPreference}</span>
+              <span className="text-red-500 text-sm">
+                {errors.drinkingPreference}
+              </span>
             )}
           </div>
 
@@ -546,7 +611,9 @@ const handleSubmit = async (e: React.FormEvent) => {
               <option value="3-4 times/week">3-4 times/week</option>
               <option value="Everyday">Everyday</option>
             </select>
-            {errors.cooking && <span className="text-red-500 text-sm">{errors.cooking}</span>}
+            {errors.cooking && (
+              <span className="text-red-500 text-sm">{errors.cooking}</span>
+            )}
           </div>
 
           {/* Greek Life */}
@@ -558,11 +625,15 @@ const handleSubmit = async (e: React.FormEvent) => {
               onChange={handleChange}
               className="w-full border rounded p-2 text-gray-600"
             >
-              <option value="">Are you part of or planning to join Greek life?</option>
+              <option value="">
+                Are you part of or planning to join Greek life?
+              </option>
               <option value="Yes">Yes</option>
               <option value="No">No</option>
             </select>
-            {errors.greekLife && <span className="text-red-500 text-sm">{errors.greekLife}</span>}
+            {errors.greekLife && (
+              <span className="text-red-500 text-sm">{errors.greekLife}</span>
+            )}
           </div>
 
           {/* Politics */}
@@ -580,7 +651,9 @@ const handleSubmit = async (e: React.FormEvent) => {
               <option value="Liberal">Liberal</option>
               <option value="Other">Other</option>
             </select>
-            {errors.politics && <span className="text-red-500 text-sm">{errors.politics}</span>}
+            {errors.politics && (
+              <span className="text-red-500 text-sm">{errors.politics}</span>
+            )}
           </div>
 
           {/* Roommate Politics */}
@@ -602,7 +675,9 @@ const handleSubmit = async (e: React.FormEvent) => {
               <option value="No Preference">No Preference</option>
             </select>
             {errors.roommatePolitics && (
-              <span className="text-red-500 text-sm">{errors.roommatePolitics}</span>
+              <span className="text-red-500 text-sm">
+                {errors.roommatePolitics}
+              </span>
             )}
           </div>
 
@@ -621,7 +696,9 @@ const handleSubmit = async (e: React.FormEvent) => {
               <option value="Other">Other</option>
               <option value="None">None</option>
             </select>
-            {errors.pets && <span className="text-red-500 text-sm">{errors.pets}</span>}
+            {errors.pets && (
+              <span className="text-red-500 text-sm">{errors.pets}</span>
+            )}
           </div>
 
           {/* Pet Preference */}
@@ -638,7 +715,9 @@ const handleSubmit = async (e: React.FormEvent) => {
               <option value="No">No</option>
             </select>
             {errors.petPreference && (
-              <span className="text-red-500 text-sm">{errors.petPreference}</span>
+              <span className="text-red-500 text-sm">
+                {errors.petPreference}
+              </span>
             )}
           </div>
 
@@ -657,11 +736,13 @@ const handleSubmit = async (e: React.FormEvent) => {
               <option value="3-4 times/week">3-4 times/week</option>
               <option value="Everyday">Everyday</option>
             </select>
-            {errors.guests && <span className="text-red-500 text-sm">{errors.guests}</span>}
+            {errors.guests && (
+              <span className="text-red-500 text-sm">{errors.guests}</span>
+            )}
           </div>
 
-           {/* Campus */}
-           <div className="w-full md:w-1/2 px-4 mb-6">
+          {/* Campus */}
+          <div className="w-full md:w-1/2 px-4 mb-6">
             <RequiredLabel text="On/Off Campus" />
             <select
               name="campus"
@@ -673,7 +754,9 @@ const handleSubmit = async (e: React.FormEvent) => {
               <option value="On-campus">On-campus</option>
               <option value="Off-campus">Off-campus</option>
             </select>
-            {errors.campus && <span className="text-red-500 text-sm">{errors.campus}</span>}
+            {errors.campus && (
+              <span className="text-red-500 text-sm">{errors.campus}</span>
+            )}
           </div>
 
           {/* Hobbies */}
@@ -685,12 +768,13 @@ const handleSubmit = async (e: React.FormEvent) => {
               onChange={handleHobbiesChange}
               placeholder="Select your hobbies"
             />
-            {errors.hobbies && <span className="text-red-500 text-sm">{errors.hobbies}</span>}
+            {errors.hobbies && (
+              <span className="text-red-500 text-sm">{errors.hobbies}</span>
+            )}
             <p className="mt-4 text-gray-700">
               Selected: <strong>{formData.hobbies.join(", ") || "None"}</strong>
             </p>
           </div>
-
 
           {/* Agreement Checkbox */}
           <div className="w-full px-4 flex items-center mb-6">
@@ -702,9 +786,14 @@ const handleSubmit = async (e: React.FormEvent) => {
               className="mr-2"
             />
             <label className="text-sm text-gray-700">
-              I agree to share my answers to help find the best match <span className="text-red-500">*</span>
+              I agree to share my answers to help find the best match{" "}
+              <span className="text-red-500">*</span>
             </label>
-            {errors.agree && <span className="text-red-500 text-sm ml-2">{errors.agree}</span>}
+            {errors.agree && (
+              <span className="text-red-500 text-sm ml-2">
+                {errors.agree}
+              </span>
+            )}
           </div>
 
           {/* Submit Button */}
