@@ -39,7 +39,10 @@ jobs:
 
       - name: Export Next.js app to static HTML
         working-directory: roomiehopie
-        run: npx next export -o ../out
+        run: npx next export
+
+      - name: Move export folder to repository root
+        run: mv roomiehopie/out .
 
       - name: Create .nojekyll file in export directory
         run: touch out/.nojekyll
