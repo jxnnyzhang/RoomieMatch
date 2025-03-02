@@ -1,0 +1,2 @@
+# In your build script or as a separate step:
+touch out/.nojekyll
