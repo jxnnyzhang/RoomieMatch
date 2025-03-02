@@ -26,20 +26,18 @@ jobs:
         with:
           node-version: "20"
           cache: npm
-          # Use the package-lock.json inside roomiehopie for caching:
+          # Use the package-lock.json inside roomiehopie for dependency caching.
           cache-dependency-path: roomiehopie/package-lock.json
 
       - name: Install dependencies
         working-directory: roomiehopie
         run: npm ci
 
-      - name: Build Next.js app
+      - name: Build Next.js app (static export)
         working-directory: roomiehopie
         run: npx next build
-
-      - name: Export Next.js app to static HTML
-        working-directory: roomiehopie
-        run: npx next export
+        # With `output: "export"` set in next.config.js, the build output is automatically exported
+        # to the default folder "out" (inside roomiehopie).
 
       - name: Move export folder to repository root
         run: mv roomiehopie/out .
