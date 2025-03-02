@@ -18,54 +18,30 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Detect package manager
-        id: detect-package-manager
-        run: |
-          cd roomiehopie
-          if [ -f package.json ]; then
-            echo "manager=npm" >> $GITHUB_OUTPUT
-            echo "command=ci" >> $GITHUB_OUTPUT
-            echo "runner=npx --no-install" >> $GITHUB_OUTPUT
-          else
-            echo "Unable to determine package manager"
-            exit 1
-          fi
-
-      - name: Setup Node
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-          cache: ${{ steps.detect-package-manager.outputs.manager }}
-
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-        with:
-          static_site_generator: next
-
-      - name: Restore cache
-        uses: actions/cache@v4
-        with:
-          path: roomiehopie/.next/cache
-          # Use explicit paths relative to the repository root.
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('roomiehopie/package-lock.json') }}-${{ hashFiles('roomiehopie/**/*.[jt]s', 'roomiehopie/**/*.[jt]sx') }}
-          restore-keys: |
-            ${{ runner.os }}-nextjs-${{ hashFiles('roomiehopie/package-lock.json') }}-
+          # Use npm and tell the action where to find your package-lock.json file.
+          cache: npm
+          cache-dependency-path: roomiehopie/package-lock.json
 
       - name: Install dependencies
         working-directory: roomiehopie
-        run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
+        run: npm ci
 
-      - name: Build with Next.js
+      - name: Build Next.js site
         working-directory: roomiehopie
-        run: ${{ steps.detect-package-manager.outputs.runner }} next build
+        run: npx next build
 
-      - name: Upload artifact
+      - name: Upload artifact for deployment
         uses: actions/upload-pages-artifact@v3
         with:
-          path: roomiehopie
+          # Adjust this path if your Next.js build output folder is different.
+          path: roomiehopie/out
 
   deploy:
     environment:
