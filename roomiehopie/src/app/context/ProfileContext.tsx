@@ -4,6 +4,7 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 
 interface ProfileData {
   name: string;
+  email: string;
   bio: string;
   profileImage: string;
 }
