@@ -26,6 +26,7 @@ jobs:
         with:
           node-version: "20"
           cache: npm
+          # Use the package-lock.json inside roomiehopie for caching:
           cache-dependency-path: roomiehopie/package-lock.json
 
       - name: Install dependencies
@@ -36,11 +37,11 @@ jobs:
         working-directory: roomiehopie
         run: npx next build
 
-      - name: Export Next.js app
+      - name: Export Next.js app to static HTML
         working-directory: roomiehopie
         run: npx next export -o ../out
 
-      - name: Create .nojekyll file
+      - name: Create .nojekyll file in export directory
         run: touch out/.nojekyll
 
       - name: Upload artifact for deployment
