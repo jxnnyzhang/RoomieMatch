@@ -1,7 +1,8 @@
 BASE_HREF = /$(OUTPUT)/
+
 # Replace this with your GitHub username
-GITHUB_USER = jxnnyzhang
-GITHUB_REPO = https://github.com/$(jxnnyzhang)/$(OUTPUT)
+GITHUB_USER = kashikadhanjal
+GITHUB_REPO = https://github.com/$(kashikadhanjal)/$(OUTPUT)
 BUILD_VERSION := $(shell grep 'version:' pubspec.yaml | awk '{print $$2}')
 
 # Deploy the Flutter web project to GitHub
@@ -30,6 +31,9 @@ endif
   git branch -M main && \
   git remote add origin $(GITHUB_REPO) && \
   git push -u -f origin main
+
+make deploy OUTPUT=test_output
+
 
   @echo "✅ Finished deploy: $(GITHUB_REPO)"
   @echo "🚀 Flutter web URL: https://$(GITHUB_USER).github.io/$(OUTPUT)/"
