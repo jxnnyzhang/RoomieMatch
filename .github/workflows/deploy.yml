@@ -37,6 +37,11 @@ jobs:
         working-directory: roomiehopie
         run: npx next build
 
+      - name: Ensure output folder has .nojekyll
+        run: |
+            mkdir -p out
+            touch out/.nojekyll
+            
       - name: Upload artifact for deployment
         uses: actions/upload-pages-artifact@v3
         with:
