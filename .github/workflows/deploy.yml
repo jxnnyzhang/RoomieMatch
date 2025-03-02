@@ -1,4 +1,4 @@
-name: Deploy Next.js site to Pages
+name: Deploy Next.js Site to GitHub Pages
 
 on:
   push:
@@ -25,31 +25,40 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-          # Use npm and tell the action where to find your package-lock.json file.
           cache: npm
+          # Use the package-lock.json inside roomiehopie for caching:
           cache-dependency-path: roomiehopie/package-lock.json
 
       - name: Install dependencies
         working-directory: roomiehopie
         run: npm ci
 
-      - name: Build Next.js site
+      - name: Build Next.js app
         working-directory: roomiehopie
         run: npx next build
+
+      - name: Export Next.js app to static HTML
+        working-directory: roomiehopie
+        run: npx next export -o ../out
+
+      - name: Create .nojekyll file in export directory
+        run: touch out/.nojekyll
 
       - name: Upload artifact for deployment
         uses: actions/upload-pages-artifact@v3
         with:
-          # Adjust this path if your Next.js build output folder is different.
-          path: roomiehopie/out
+          path: out
 
   deploy:
+    runs-on: ubuntu-latest
+    needs: build
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
     steps:
+      - name: Download artifact
+        uses: actions/download-pages-artifact@v3
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
