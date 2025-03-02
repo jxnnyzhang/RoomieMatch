@@ -786,7 +786,7 @@ const App: React.FC = () => {
               className="mr-2"
             />
             <label className="text-sm text-gray-700">
-              I agree to share my answers to help find the best match{" "}
+              I agree to share my contact information and answers to help find the best match{" "}
               <span className="text-red-500">*</span>
             </label>
             {errors.agree && (
