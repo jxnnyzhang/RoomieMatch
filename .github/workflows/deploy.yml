@@ -1,4 +1,4 @@
-name: Build and Deploy
+name: Deploy Next.js Site to GitHub Pages
 
 on:
   push:
@@ -10,12 +10,13 @@ permissions:
   pages: write
   id-token: write
 
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
 jobs:
   build:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./roomiehopie
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -25,31 +26,39 @@ jobs:
         with:
           node-version: "20"
           cache: npm
-          cache-dependency-path: package-lock.json
+          # Use the package-lock.json inside roomiehopie for caching:
+          cache-dependency-path: roomiehopie/package-lock.json
 
       - name: Install dependencies
+        working-directory: roomiehopie
         run: npm ci
 
-      - name: Build and Export Next.js app
-        run: |
-          npm run build
-          # Next.js will output to the 'out' folder (as defined in next.config.js)
-          # Optionally, ensure the .nojekyll file exists to bypass Jekyll processing:
-          mkdir -p out && touch out/.nojekyll
+      - name: Build Next.js app
+        working-directory: roomiehopie
+        run: npx next build
 
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v1
+      - name: Export Next.js app to static HTML
+        working-directory: roomiehopie
+        run: npx next export -o ../out
+
+      - name: Create .nojekyll file in export directory
+        run: touch out/.nojekyll
+
+      - name: Upload artifact for deployment
+        uses: actions/upload-pages-artifact@v3
         with:
           path: out
 
   deploy:
-    needs: build
     runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Download Pages artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: pages
+      - name: Download artifact
+        uses: actions/download-pages-artifact@v3
+
       - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v4
         id: deployment
+        uses: actions/deploy-pages@v4
