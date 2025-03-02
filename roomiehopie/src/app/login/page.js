@@ -8,7 +8,7 @@ export default function Login() {
         <h1 className="text-2xl font-bold mb-4">Welcome</h1>
         <p className="text-gray-600 mb-6">Log in with your school account</p>
         <button
-          onClick={() => signIn("credentials", { callbackUrl: "/dashboard" })}
+          onClick={() => signIn("credentials")} // Removed callbackUrl
           className="bg-blue-600 text-white px-6 py-2 rounded-lg shadow-md hover:bg-blue-700 transition"
         >
           Sign in with CAS
