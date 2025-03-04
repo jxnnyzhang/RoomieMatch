@@ -32,10 +32,9 @@ endif
   git remote add origin $(GITHUB_REPO) && \
   git push -u -f origin main
 
-make deploy OUTPUT=test_output
-
-
   @echo "✅ Finished deploy: $(GITHUB_REPO)"
   @echo "🚀 Flutter web URL: https://$(GITHUB_USER).github.io/$(OUTPUT)/"
 
 .PHONY: deploy
+make deploy OUTPUT=test_output
+
