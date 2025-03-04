@@ -15,7 +15,7 @@ export default function ProfilePage() {
   const [isLoading, setIsLoading] = useState(false);
   const [mounted, setMounted] = useState(false);
 
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const _fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -56,7 +56,7 @@ export default function ProfilePage() {
     }, 3000);
   };
 
-  const defaultImgSrc =
+  const _defaultImgSrc =
     "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=";
 
   if (!mounted) {
