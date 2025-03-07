@@ -1,6 +1,9 @@
 // src/app/layout.tsx
 import "./globals.css";
 import { ProfileProvider } from "./context/ProfileContext"; // adjust path if necessary
+import AuthProvider from "./components/SessionProvider"; // Import the wrapper
+
+
 
 export default function RootLayout({
   children,
@@ -8,12 +11,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
+  
+
     <html lang="en">
       <body>
-        <ProfileProvider>
-          {children}
-        </ProfileProvider>
+         <ProfileProvider>
+           <AuthProvider> {children} </AuthProvider>
+         </ProfileProvider>
       </body>
-    </html>
+   </html>
+   
+
   );
 }
