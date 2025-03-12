@@ -7,8 +7,7 @@ const nextConfig = {
   //assetPrefix: isProd ? `/${repoName}/` : "",
   images: {
     unoptimized: true, // Disable image optimization for GitHub Pages
-  },
-  output: "export", // Enable static export mode
+  }, 
 };
 
-export default nextConfig;
+module.exports = nextConfig;

@@ -15,11 +15,7 @@ export default function ProfilePage() {
   const [isLoading, setIsLoading] = useState(false);
   const [mounted, setMounted] = useState(false);
 
-<<<<<<< Updated upstream
   const _fileInputRef = useRef<HTMLInputElement>(null);
-=======
-  const fileInputRef = useRef<HTMLInputElement>(null);
->>>>>>> Stashed changes
 
   useEffect(() => {
     setMounted(true);
@@ -60,11 +56,7 @@ export default function ProfilePage() {
     }, 3000);
   };
 
-<<<<<<< Updated upstream
   const _defaultImgSrc =
-=======
-  const defaultImgSrc =
->>>>>>> Stashed changes
     "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=";
 
   if (!mounted) {
