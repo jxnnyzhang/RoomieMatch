@@ -21,6 +21,9 @@ const handler = NextAuth({
     }),
   ],
   secret: process.env.NEXTAUTH_SECRET,
+  pages: {
+    error: '/RoomieMatch/api/auth/error', // Override the default error page
+  },
 });
 
 export { handler as GET, handler as POST };

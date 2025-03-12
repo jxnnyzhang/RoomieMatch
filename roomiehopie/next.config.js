@@ -1,13 +1,10 @@
-import type { NextConfig } from "next";
-
-<<<<<<< Updated upstream
 const isProd = process.env.NODE_ENV === "production";
 const repoName = "RoomieMatch"; // your repository name
 
-const nextConfig: NextConfig = {
+const nextConfig = {
   reactStrictMode: true,
-  basePath: isProd ? `/${repoName}` : "",
-  assetPrefix: isProd ? `/${repoName}/` : "",
+  //basePath: isProd ? `/${repoName}` : "",
+  //assetPrefix: isProd ? `/${repoName}/` : "",
   images: {
     unoptimized: true, // Disable image optimization for GitHub Pages
   },
@@ -15,10 +12,3 @@ const nextConfig: NextConfig = {
 };
 
 export default nextConfig;
-=======
-
-  
-module.exports = {};  // Add other config options here if needed
-
-
->>>>>>> Stashed changes
