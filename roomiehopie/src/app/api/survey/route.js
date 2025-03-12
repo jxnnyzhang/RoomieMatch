@@ -14,11 +14,18 @@ async function openDB() {
 export async function POST(request) {
   try {
     // Parse the incoming JSON data
-    const data = await request.json();
-
+    const _data = await request.json();
+    console.log("Received data:", _data);
+      if (req.method === "POST") {
+        // Process form submission
+        res.status(200).json({ success: true });
+      } else {
+        // If the method is not POST, return 405
+        res.setHeader("Allow", ["POST"]);
+        res.status(405).json({ error: "Method Not Allowed" });
+      }
+    }
     // Log the received data to the terminal for testing purposes
-    console.log("Received survey data:", data);
-
     // When you're ready to actually insert into your database,
     // uncomment the following block:
 
@@ -64,14 +71,15 @@ export async function POST(request) {
       ]
     );
     */
-
+    
     // Return a successful JSON response
-    return NextResponse.json({ success: true, data });
-  } catch (error) {
+    //return NextResponse.json({ success: true, data });
+  //} 
+  catch (error) {
     console.error("Error processing survey data:", error);
     return NextResponse.json(
       { success: false, error: error.message },
-      { status: 500 }
+     { status: 500 }
     );
   }
 }
