@@ -6,7 +6,7 @@ interface ProfileData {
   name: string;
   email: string;
   bio: string;
-  profileImage: string;
+  profileImage: string; // Consider storing a URL here if the image is large.
 }
 
 interface ProfileContextType extends ProfileData {
@@ -16,17 +16,36 @@ interface ProfileContextType extends ProfileData {
 const ProfileContext = createContext<ProfileContextType | undefined>(undefined);
 
 export function ProfileProvider({ children }: { children: React.ReactNode }) {
-  const [profile, setProfile] = useState<ProfileData>(() => {
-    if (typeof window !== "undefined") {
-      const stored = localStorage.getItem("profile");
-      return stored ? JSON.parse(stored) : { name: "", bio: "", profileImage: "" };
-    }
-    return { name: "", bio: "", profileImage: "" };
+  const [profile, setProfile] = useState<ProfileData>({
+    name: "",
+    email: "",
+    bio: "",
+    profileImage: ""
   });
 
-  // Save to localStorage whenever profile changes
+  // Load profile data from localStorage on mount
   useEffect(() => {
-    localStorage.setItem("profile", JSON.stringify(profile));
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("profile");
+      if (stored) {
+        setProfile(JSON.parse(stored));
+      }
+    }
+  }, []);
+
+  // Save profile to localStorage whenever it changes
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.setItem("profile", JSON.stringify(profile));
+      } catch (error: any) {
+        if (error.name === "QuotaExceededError") {
+          console.error("Local storage quota exceeded. Consider reducing the data size or cleaning up unused items.");
+        } else {
+          console.error("Error saving to localStorage:", error);
+        }
+      }
+    }
   }, [profile]);
 
   return (

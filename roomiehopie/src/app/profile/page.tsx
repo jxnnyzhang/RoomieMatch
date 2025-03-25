@@ -92,6 +92,10 @@ export default function ProfilePage() {
           <h1 className="text-pink-500 text-xl font-bold self-start mb-4">
             Profile
           </h1>
+          {/* New message */}
+          <p className="text-sm text-gray-600 mb-2">
+            File size must not exceed 5MB.
+          </p>
           <div className="w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden mb-4">
             {profileImage ? (
               <img

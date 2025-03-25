@@ -5,6 +5,9 @@ import MultiSelectCheckbox from "./MultiSelectCheckbox";
 import { useRouter } from "next/navigation";
 
 interface FormData {
+  ranking1: any;
+  ranking2: any;
+  ranking3: any;
   firstName: string;
   lastName: string;
   email: string;
@@ -72,6 +75,9 @@ const App: React.FC = () => {
     major: "",
     roommateMajor: "",
     hobbies: [],
+    ranking1: "",
+    ranking2: "",
+    ranking3: "",
     campus: "",
     agree: false,
   });
@@ -86,6 +92,21 @@ const App: React.FC = () => {
     "Cooking",
     "Reading",
     "Traveling",
+  ];
+
+  // Options for important factors
+  const importanceOptions = [
+    "Cleanliness",
+    "Noise Level",
+    "Sleep Time",
+    "Cooking",
+    "Major Preference",
+    "Politics Preference",
+    "Religion Preference",
+    "Greek Life",
+    "Language",
+    "Hobbies",
+    "Guests",
   ];
 
   const handleChange = (
@@ -182,6 +203,18 @@ const App: React.FC = () => {
     if (!formData.campus.trim())
       newErrors.campus = "Please fill this out";
     if (!formData.agree) newErrors.agree = "Please agree to the terms";
+
+    // Validate factor rankings
+    if (!formData.ranking1) newErrors.ranking1 = "Please select the first priority";
+    if (!formData.ranking2) newErrors.ranking2 = "Please select the second priority";
+    if (!formData.ranking3) newErrors.ranking3 = "Please select the third priority";
+
+    // Check for duplicate selections
+    const selectedRankings = new Set([
+      formData.ranking1,
+      formData.ranking2,
+      formData.ranking3,
+    ]);
 
     return newErrors;
   };
@@ -774,6 +807,34 @@ const App: React.FC = () => {
             <p className="mt-4 text-gray-700">
               Selected: <strong>{formData.hobbies.join(", ") || "None"}</strong>
             </p>
+          </div>
+
+          {/* Most Important Factors */}
+          <div className="w-full md:w-1/2 px-4 mb-6 text-gray-700">
+            <RequiredLabel text="Which factors are most important to you?" />
+            {["ranking1", "ranking2", "ranking3"].map((rank, i) => (
+              <div key={rank} className="mb-4">
+                <label className="block text-gray-600 mb-1">
+                Top {i + 1} 
+                </label>
+                <select
+                  name={rank}
+                  value={formData[rank as keyof FormData]}
+                  onChange={handleChange}
+                  className="w-full border rounded p-2"
+                >
+                  <option value="">Select factor</option>
+                  {importanceOptions.map((option) => (
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
+                {errors[rank] && (
+                  <span className="text-red-500">{errors[rank]}</span>
+                )}
+              </div>
+            ))}
           </div>
 
           {/* Agreement Checkbox */}
