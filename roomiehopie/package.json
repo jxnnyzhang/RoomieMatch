@@ -1,6 +1,7 @@
 {
   "name": "roomiehopie",
   "version": "0.1.0",
+  "homepage": "https://jxnnyzhang.github.io/RoomieMatch",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
