@@ -10,7 +10,24 @@ const handler = NextAuth({
   ],
   secret: process.env.NEXTAUTH_SECRET,
   pages: {
-    error: '/RoomieMatch/api/auth/error', // Override the default error page
+    error: '/RoomieMatch/api/auth/error',
+  },
+  callbacks: {
+    async signIn({ account, profile }) {
+      if (account?.provider === 'google') {
+        const email = profile?.email || "";
+        console.log("Google login attempt by:", email);
+
+        if (email.endsWith("@case.edu")) {
+          return true; // allow sign-in
+        } else {
+          // redirect to custom error page
+          return '/auth/error?error=InvalidDomain';
+        }
+      }
+
+      return true; // allow other providers if added later
+    },
   },
 });
 
