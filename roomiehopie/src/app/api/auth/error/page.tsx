@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -20,12 +21,12 @@ export default function ErrorPage() {
     <div className="flex flex-col items-center justify-center min-h-screen px-4 text-center">
       <h1 className="text-3xl font-semibold mb-4">Sign-in Error</h1>
       <p className="text-lg text-gray-700 mb-6">{message}</p>
-      <a
+      <Link
         href="/api/auth/signin"
         className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
       >
         Try Again
-      </a>
+      </Link>
     </div>
   );
 }
