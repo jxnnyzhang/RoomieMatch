@@ -96,17 +96,15 @@ const App: React.FC = () => {
 
   // Options for important factors
   const importanceOptions = [
-    "Cleanliness",
-    "Noise Level",
-    "Sleep Time",
-    "Cooking",
-    "Major Preference",
-    "Politics Preference",
-    "Religion Preference",
-    "Greek Life",
-    "Language",
-    "Hobbies",
-    "Guests",
+    "clean",
+    "noise",
+    "sleep",
+    "cook",
+    "major preference",
+    "religion preference",
+    "politics preference",
+    "greeklife",
+    "hobbies",
   ];
 
   const handleChange = (
@@ -256,7 +254,7 @@ const App: React.FC = () => {
     <div className="flex justify-center items-start min-h-screen bg-orange-200 py-10">
       <div className="w-full max-w-4xl bg-white shadow-lg rounded-xl p-10">
         <h2 className="text-3xl font-bold mb-6 text-center text-gray-600">
-          Welcome, XXX!
+          Welcome, [XXX]!
         </h2>
         <p className="mb-8 text-gray-600 text-center">
           Here is a brief survey for you to answer so we can find you your best
