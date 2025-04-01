@@ -11,6 +11,7 @@ interface Styles {
   text: CSSProperties;
   avatar: CSSProperties;
   button: CSSProperties;
+  continueButton: CSSProperties;
 }
 
 const styles: Styles = {
@@ -50,11 +51,21 @@ const styles: Styles = {
     padding: "10px 40px",
     border: "none",
     borderRadius: "4px",
-    backgroundColor: "#0070f3",
+    backgroundColor: "gray",
     color: "#fff",
     cursor: "pointer",
-    marginTop: "10px",
-    width: "fit-content", // Button will only be as wide as its content.
+    width: "fit-content",
+    alignSelf: "center",
+  },
+  // Continue button style with a different color (green in this case)
+  continueButton: {
+    padding: "10px 40px",
+    border: "none",
+    borderRadius: "4px",
+    backgroundColor: "#0070f3", 
+    color: "#fff",
+    cursor: "pointer",
+    width: "fit-content",
     alignSelf: "center",
   },
 };
@@ -79,11 +90,11 @@ export default function LoginPage() {
             />
             <p style={styles.text}>Email: {session.user?.email}</p>
             <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "10px" }}>
+              <button style={styles.continueButton} onClick={() => router.push("/")}>
+                Continue
+              </button>
               <button style={styles.button} onClick={() => signOut()}>
                 Sign Out
-              </button>
-              <button style={styles.button} onClick={() => router.push("/")}>
-                Continue
               </button>
             </div>
           </div>
