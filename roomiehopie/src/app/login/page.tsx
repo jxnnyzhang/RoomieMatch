@@ -1,6 +1,7 @@
 "use client";
 
 import { signIn, signOut, useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import React, { CSSProperties } from "react";
 
 interface Styles {
@@ -46,18 +47,21 @@ const styles: Styles = {
     marginRight: "auto",
   },
   button: {
-    padding: "10px 20px",
+    padding: "10px 40px",
     border: "none",
     borderRadius: "4px",
     backgroundColor: "#0070f3",
     color: "#fff",
     cursor: "pointer",
     marginTop: "10px",
+    width: "fit-content", // Button will only be as wide as its content.
+    alignSelf: "center",
   },
 };
 
 export default function LoginPage() {
   const { data: session } = useSession();
+  const router = useRouter();
 
   return (
     <div style={styles.container}>
@@ -74,9 +78,14 @@ export default function LoginPage() {
               height={100}
             />
             <p style={styles.text}>Email: {session.user?.email}</p>
-            <button style={styles.button} onClick={() => signOut()}>
-              Sign Out
-            </button>
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "10px" }}>
+              <button style={styles.button} onClick={() => signOut()}>
+                Sign Out
+              </button>
+              <button style={styles.button} onClick={() => router.push("/")}>
+                Continue
+              </button>
+            </div>
           </div>
         ) : (
           <button style={styles.button} onClick={() => signIn("google")}>
