@@ -3,6 +3,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { useProfile } from "../context/ProfileContext";
+import { signOut } from "next-auth/react";
 
 export default function ProfilePage() {
   // Pull global profile data and update function from context.
@@ -15,7 +16,7 @@ export default function ProfilePage() {
   const [isLoading, setIsLoading] = useState(false);
   const [mounted, setMounted] = useState(false);
 
-  const _fileInputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -42,22 +43,72 @@ export default function ProfilePage() {
     }
   };
 
-  // Update the global profile and simulate a loading state before refreshing.
-  const handleUpdate = () => {
-    setProfile((prev) => ({
-      ...prev,
+  // Update the global profile and also save it to the API.
+  const handleUpdate = async () => {
+    const updatedProfile = {
       name: tempName,
       email: tempEmail,
       bio: tempBio,
-    }));
+      profileImage: profileImage, // include if needed
+    };
+  
     setIsLoading(true);
-    setTimeout(() => {
-      window.location.reload();
-    }, 3000);
+    try {
+      // Ensure this URL and method match your backend configuration
+      const res = await fetch("http://104.45.197.195:8000/update_user", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedProfile),
+      });
+      const result = await res.json();
+      if (result.success) {
+        // Update the context with the new data
+        setProfile(updatedProfile);
+        // Immediately reload or re-render the component
+        window.location.reload();
+      } else {
+        alert("Error updating profile: " + result.error);
+        setIsLoading(false);
+      }
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      alert("Error updating profile. Please try again.");
+      setIsLoading(false);
+    }
+  };
+  
+
+  // Sign out the user and redirect to login.
+  const handleSignOut = () => {
+    signOut({ callbackUrl: "/login" });
   };
 
-  const _defaultImgSrc =
-    "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=";
+  // Delete profile: call the API to delete the user record then sign out.
+  const handleDeleteProfile = async () => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete your profile? This action cannot be undone."
+    );
+    if (confirmed) {
+      try {
+        const res = await fetch("http://104.45.197.195:8000/delete_user", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: tempEmail || email }),
+        });
+        const result = await res.json();
+        if (result.success) {
+          console.log("deleting profile");
+          setProfile({ name: "", email: "", bio: "", profileImage: "" });
+          signOut({ callbackUrl: "/login" });
+        } else {
+          alert("Error deleting profile: " + result.error);
+        }
+      } catch (error) {
+        console.error("Error deleting profile:", error);
+        alert("Error deleting profile. Please try again.");
+      }
+    }
+  };
 
   if (!mounted) {
     return null;
@@ -65,7 +116,6 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-orange-200 flex flex-col items-center justify-center p-6">
-      {/* Loading spinner overlay */}
       {isLoading && (
         <div className="fixed top-0 left-0 right-0 flex justify-center items-center p-4 z-50">
           <svg className="animate-spin h-6 w-6 text-pink-500" viewBox="0 0 24 24">
@@ -87,15 +137,10 @@ export default function ProfilePage() {
       )}
 
       <div className="bg-white w-full max-w-3xl rounded-xl shadow-md p-6 flex flex-col md:flex-row">
-        {/* Left Column: Profile Photo */}
+        {/* Left Column: Profile Photo and Sign Out */}
         <div className="md:w-1/3 flex flex-col items-center mb-6 md:mb-0 md:mr-6">
-          <h1 className="text-pink-500 text-xl font-bold self-start mb-4">
-            Profile
-          </h1>
-          {/* New message */}
-          <p className="text-sm text-gray-600 mb-2">
-            File size must not exceed 5MB.
-          </p>
+          <h1 className="text-pink-500 text-xl font-bold self-start mb-4">Profile</h1>
+          <p className="text-sm text-gray-600 mb-2">File size must not exceed 5MB.</p>
           <div className="w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden mb-4">
             {profileImage ? (
               <img
@@ -119,14 +164,26 @@ export default function ProfilePage() {
               className="hidden"
             />
           </label>
+          <div className = "flex flex-col space-y-2 mt-[60px]">
+            <button
+              onClick={handleSignOut}
+              className="mt-4 w-full max-w-xs bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
+            >
+              Sign Out
+            </button>
+            <button
+                onClick={handleDeleteProfile}
+                className="w-full max-w-xs bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition"
+              >
+                Delete Profile
+              </button>
+            </div>
         </div>
 
-        {/* Right Column: Name, Email & Bio */}
+        {/* Right Column: Profile Info Fields and Row of Buttons */}
         <div className="md:w-2/3 flex flex-col">
           <div className="mb-4">
-            <label className="block text-pink-500 font-semibold mb-1">
-              Name
-            </label>
+            <label className="block text-pink-500 font-semibold mb-1">Name</label>
             <input
               type="text"
               placeholder="Enter your name"
@@ -137,9 +194,7 @@ export default function ProfilePage() {
             />
           </div>
           <div className="mb-4">
-            <label className="block text-pink-500 font-semibold mb-1">
-              Email
-            </label>
+            <label className="block text-pink-500 font-semibold mb-1">Email</label>
             <input
               type="email"
               placeholder="Enter your email"
@@ -150,9 +205,7 @@ export default function ProfilePage() {
             />
           </div>
           <div className="mb-4">
-            <label className="block text-pink-500 font-semibold mb-1">
-              Bio
-            </label>
+            <label className="block text-pink-500 font-semibold mb-1">Bio</label>
             <textarea
               placeholder="Tell us about yourself"
               rows={6}
@@ -165,13 +218,13 @@ export default function ProfilePage() {
           <div className="flex items-center space-x-4">
             <button
               onClick={handleUpdate}
-              className="bg-black text-white px-6 py-2 rounded-lg hover:bg-gray-800 transition"
+              className="w-full max-w-xs bg-black text-white px-6 py-2 rounded-lg hover:bg-gray-800 transition"
             >
               Update
             </button>
             <Link
               href="/match"
-              className="bg-gray-300 text-black px-6 py-2 rounded-lg hover:bg-gray-400 transition"
+              className="w-full flex justify-center max-w-xs bg-gray-300 text-black px-6 py-2 rounded-lg hover:bg-gray-400 transition"
             >
               Back to Match
             </Link>
