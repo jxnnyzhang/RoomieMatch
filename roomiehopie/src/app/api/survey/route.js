@@ -13,18 +13,30 @@ async function openDB() {
 */
 export async function POST(request) {
   try {
-    // Parse the incoming JSON data
-    const _data = await request.json();
-    console.log("Received data:", _data);
-      if (req.method === "POST") {
-        // Process form submission
-        res.status(200).json({ success: true });
-      } else {
-        // If the method is not POST, return 405
-        res.setHeader("Allow", ["POST"]);
-        res.status(405).json({ error: "Method Not Allowed" });
+    // Parse the JSON data from the request
+    const data = await request.json();
+    console.log("Received data:", data);
+    
+    // Process the form submission (e.g., save to a database)
+    
+    // Return a successful JSON response
+    return new Response(JSON.stringify({ success: true }), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
+  } catch (error) {
+    console.error("Error processing survey data:", error);
+    
+    // Return an error JSON response
+    return new Response(
+      JSON.stringify({ error: "Failed to save survey data" }),
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
       }
-    }
+    );
+  }
+}
     // Log the received data to the terminal for testing purposes
     // When you're ready to actually insert into your database,
     // uncomment the following block:
@@ -75,11 +87,5 @@ export async function POST(request) {
     // Return a successful JSON response
     //return NextResponse.json({ success: true, data });
   //} 
-  catch (error) {
-    console.error("Error processing survey data:", error);
-    return NextResponse.json(
-      { success: false, error: error.message },
-     { status: 500 }
-    );
-  }
-}
+ 
+
