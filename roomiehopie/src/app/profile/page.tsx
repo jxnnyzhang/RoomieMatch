@@ -55,7 +55,7 @@ export default function ProfilePage() {
     setIsLoading(true);
     try {
       // Ensure this URL and method match your backend configuration
-      const res = await fetch("http://104.45.197.195:8000/update_user", {
+      const res = await fetch("https://104.45.197.195:8000/update_user", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updatedProfile),

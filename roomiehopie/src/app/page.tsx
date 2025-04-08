@@ -46,7 +46,7 @@ async function createUserInApi(userData: {
   case_email: string;
 }): Promise<boolean> {
   try {
-    const response = await fetch("http://104.45.197.195/create_user", {
+    const response = await fetch("https://jsonplaceholder.typicode.com/todos", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(userData),
