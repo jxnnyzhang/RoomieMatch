@@ -1,9 +1,9 @@
 'use client';
 
+import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
 
-export default function ErrorPage() {
+function ErrorContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [message, setMessage] = useState("Something went wrong. Please try again.");
@@ -32,5 +32,13 @@ export default function ErrorPage() {
         Try Again
       </button>
     </div>
+  );
+}
+
+export default function ErrorPage() {
+  return (
+    <Suspense fallback={<div>Loading error details...</div>}>
+      <ErrorContent />
+    </Suspense>
   );
 }
