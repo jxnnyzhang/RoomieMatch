@@ -141,7 +141,7 @@ export default function MatchPage() {
               <div className="flex flex-col justify-center items-center h-full p-4 text-center">
                 <h3 className="text-xl text-gray-700 font-bold mb-2">Contact Information</h3>
                 <p className="text-gray-700 mb-4">{contact}</p>
-                <h3 className="text-xl text-gray-700 font-bold mb-2">Survey Preview</h3>
+                <h3 className="text-xl text-gray-700 font-bold mb-2">Bio</h3>
                 <p className="text-gray-700">{surveyPreview}</p>
               </div>
             </div>
