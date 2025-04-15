@@ -11,30 +11,41 @@ async function openDB() {
   });
 }
 */
+export async function GET(request) {
+  return NextResponse.json({ message: 'This route only supports POST for updates.' }, { status: 405 });
+}
+
 export async function POST(request) {
   try {
-    // Parse the JSON data from the request
-    const data = await request.json();
-    console.log("Received data:", data);
-    
-    // Process the form submission (e.g., save to a database)
-    
-    // Return a successful JSON response
-    return new Response(JSON.stringify({ success: true }), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    });
-  } catch (error) {
-    console.error("Error processing survey data:", error);
-    
-    // Return an error JSON response
-    return new Response(
-      JSON.stringify({ error: "Failed to save survey data" }),
+    const reqData = await request.json();
+    console.log('Incoming data:', reqData);
+
+    const externalResponse = await fetch(
+      'https://roomiematch-h4grfpd8d7cwbufb.eastus2-01.azurewebsites.net/create_user',
       {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(reqData)
       }
     );
+
+    //console.log('External API response status:', externalResponse.status);
+    
+    // If the external API returns an error, capture and return that error
+    if (!externalResponse.ok) {
+      const errorData = await externalResponse.text(); // Using text here to handle non-JSON responses
+      console.error('External API error:', errorData);
+      return NextResponse.json({ error: errorData }, { status: externalResponse.status });
+    }
+
+    // Parse the JSON response from the external API
+    const data = await externalResponse.json();
+    return NextResponse.json(data, { status: 200 });
+  } catch (error) {
+    console.error('Error in update_user API route:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
     // Log the received data to the terminal for testing purposes

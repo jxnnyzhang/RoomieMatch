@@ -7,37 +7,39 @@ import { useRouter } from "next/navigation";
 
 
 interface FormData {
-  ranking1: any;
-  ranking2: any;
-  ranking3: any;
-  firstName: string;
-  lastName: string;
-  email: string;
+  top_1: any;
+  top_2: any;
+  top_3: any;
+  profile_pic: "jpg",
+  bio: string,
+  firstname: string;
+  lastname: string;
+  case_email: string;
   gender: string;
-  genderPreference: string;
+  gender_preference: string;
   year: string;
-  sleepTime: string;
-  cleanliness: string;
-  noiseLevel: string;
+  sleep: string;
+  clean: string;
+  noise: string;
   religion: string;
-  religionPreferences: string;
-  languagePreferences: string;
-  smoking: string;
-  smokingPreference: string;
-  drinking: string;
-  drinkingPreference: string;
-  cooking: string;
-  greekLife: string;
+  religion_preference: string;
+  language: string;
+  smoke: string;
+  against_smoker: string;
+  drink: string;
+  against_drinker: string;
+  cook: string;
+  greeklife: string;
   politics: string;
-  roommatePolitics: string;
+  politics_preference: string;
   pets: string;
-  petPreference: string;
+  against_pet: string;
   guests: string;
   major: string;
-  roommateMajor: string;
+  major_preference: string;
   hobbies: string[];
-  campus: string;
-  agree: boolean;
+  housing: string;
+  //agree: boolean;
 }
 
 // Helper component to render a label with a red asterisk.
@@ -52,37 +54,39 @@ const Survey: React.FC = () => {
   const { data: session, status } = useSession();
 
   const [formData, setFormData] = useState<FormData>({
-    firstName: "",
-    lastName: "",
-    email: "",
+    firstname: "",
+    lastname: "",
+    case_email: "",
     gender: "",
-    genderPreference: "",
+    gender_preference: "",
     year: "",
-    sleepTime: "",
-    cleanliness: "",
-    noiseLevel: "",
+    sleep: "",
+    clean: "",
+    noise: "",
     religion: "",
-    religionPreferences: "",
-    languagePreferences: "",
-    smoking: "",
-    smokingPreference: "",
-    drinking: "",
-    drinkingPreference: "",
-    cooking: "",
-    greekLife: "",
+    religion_preference: "",
+    language: "",
+    smoke: "",
+    against_smoker: "",
+    drink: "",
+    against_drinker: "",
+    cook: "",
+    greeklife: "",
     politics: "",
-    roommatePolitics: "",
+    politics_preference: "",
     pets: "",
-    petPreference: "",
+    against_pet: "",
     guests: "",
     major: "",
-    roommateMajor: "",
+    major_preference: "",
     hobbies: [],
-    ranking1: "",
-    ranking2: "",
-    ranking3: "",
-    campus: "",
-    agree: false,
+    top_1: "",
+    top_2: "",
+    top_3: "",
+    housing: "",
+    profile_pic: "jpg",
+    bio: ""
+    //agree: false,
   });
 
   // This state holds error messages for each field.
@@ -150,75 +154,75 @@ const Survey: React.FC = () => {
   // Validate all fields and return an errors object.
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
-    if (!formData.firstName.trim())
+    if (!formData.firstname.trim())
       newErrors.firstName = "Please fill this out";
-    if (!formData.lastName.trim())
+    if (!formData.lastname.trim())
       newErrors.lastName = "Please fill this out";
-    if (!formData.email.trim()) {
+    if (!formData.case_email.trim()) {
       newErrors.email = "Please fill this out";
     } else if (
-      !formData.email.trim().toLowerCase().endsWith("@case.edu")
+      !formData.case_email.trim().toLowerCase().endsWith("@case.edu")
     ) {
       newErrors.email = "Email must end in @case.edu";
     }
     if (!formData.gender.trim()) newErrors.gender = "Please fill this out";
-    if (!formData.genderPreference.trim())
+    if (!formData.gender_preference.trim())
       newErrors.genderPreference = "Please fill this out";
     if (!formData.year.trim()) newErrors.year = "Please fill this out";
-    if (!formData.sleepTime.trim())
+    if (!formData.sleep.trim())
       newErrors.sleepTime = "Please fill this out";
-    if (!formData.cleanliness.trim())
+    if (!formData.clean.trim())
       newErrors.cleanliness = "Please fill this out";
-    if (!formData.noiseLevel.trim())
+    if (!formData.noise.trim())
       newErrors.noiseLevel = "Please fill this out";
     if (!formData.religion.trim())
       newErrors.religion = "Please fill this out";
-    if (!formData.religionPreferences.trim())
+    if (!formData.religion_preference.trim())
       newErrors.religionPreferences = "Please fill this out";
-    if (!formData.languagePreferences.trim())
+    if (!formData.language.trim())
       newErrors.languagePreferences = "Please fill this out";
-    if (!formData.smoking.trim())
+    if (!formData.smoke.trim())
       newErrors.smoking = "Please fill this out";
-    if (!formData.smokingPreference.trim())
+    if (!formData.against_smoker.trim())
       newErrors.smokingPreference = "Please fill this out";
-    if (!formData.drinking.trim())
+    if (!formData.drink.trim())
       newErrors.drinking = "Please fill this out";
-    if (!formData.drinkingPreference.trim())
+    if (!formData.against_drinker.trim())
       newErrors.drinkingPreference = "Please fill this out";
-    if (!formData.cooking.trim())
+    if (!formData.cook.trim())
       newErrors.cooking = "Please fill this out";
-    if (!formData.greekLife.trim())
+    if (!formData.greeklife.trim())
       newErrors.greekLife = "Please fill this out";
     if (!formData.politics.trim())
       newErrors.politics = "Please fill this out";
-    if (!formData.roommatePolitics.trim())
+    if (!formData.politics_preference.trim())
       newErrors.roommatePolitics = "Please fill this out";
     if (!formData.pets.trim())
       newErrors.pets = "Please fill this out";
-    if (!formData.petPreference.trim())
+    if (!formData.against_pet.trim())
       newErrors.petPreference = "Please fill this out";
     if (!formData.guests.trim())
       newErrors.guests = "Please fill this out";
     if (!formData.major.trim())
       newErrors.major = "Please fill this out";
-    if (!formData.roommateMajor.trim())
+    if (!formData.major_preference.trim())
       newErrors.roommateMajor = "Please fill this out";
     if (formData.hobbies.length === 0)
       newErrors.hobbies = "Please select at least one";
-    if (!formData.campus.trim())
+    if (!formData.housing.trim())
       newErrors.campus = "Please fill this out";
-    if (!formData.agree) newErrors.agree = "Please agree to the terms";
+    //if (!formData.agree) newErrors.agree = "Please agree to the terms";
 
     // Validate factor rankings
-    if (!formData.ranking1) newErrors.ranking1 = "Please select the first priority";
-    if (!formData.ranking2) newErrors.ranking2 = "Please select the second priority";
-    if (!formData.ranking3) newErrors.ranking3 = "Please select the third priority";
+    if (!formData.top_1) newErrors.ranking1 = "Please select the first priority";
+    if (!formData.top_2) newErrors.ranking2 = "Please select the second priority";
+    if (!formData.top_3) newErrors.ranking3 = "Please select the third priority";
 
     // Check for duplicate selections
     const selectedRankings = new Set([
-      formData.ranking1,
-      formData.ranking2,
-      formData.ranking3,
+      formData.top_1,
+      formData.top_2,
+      formData.top_3,
     ]);
 
     return newErrors;
@@ -237,18 +241,12 @@ const Survey: React.FC = () => {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(formData),
+          
         });
-
-        // 2) Check for success
-        if (!res.ok) {
-          throw new Error("Failed to save survey data");
-        }
         const result = await res.json();
-        if (!result.success) {
-          throw new Error(result.error || "Unknown error");
-        }
-
-        // 3) If successful, go to /match or show a success message
+        console.log(result)
+        console.log("User ID:", result.userID)
+                    
         router.push("/match");
       } catch (error) {
         console.error("Error submitting survey:", error);
@@ -273,8 +271,8 @@ const Survey: React.FC = () => {
             <RequiredLabel text="First Name" />
             <input
               type="text"
-              name="firstName"
-              value={formData.firstName}
+              name="firstname"
+              value={formData.firstname}
               onChange={handleChange}
               className="w-full border rounded p-2 text-gray-600"
             />
@@ -288,8 +286,8 @@ const Survey: React.FC = () => {
             <RequiredLabel text="Last Name" />
             <input
               type="text"
-              name="lastName"
-              value={formData.lastName}
+              name="lastname"
+              value={formData.lastname}
               onChange={handleChange}
               className="w-full border rounded p-2 text-gray-600"
             />
@@ -303,8 +301,8 @@ const Survey: React.FC = () => {
             <RequiredLabel text="Email" />
             <input
               type="text"
-              name="email"
-              value={formData.email}
+              name="case_email"
+              value={formData.case_email}
               onChange={handleChange}
               className="w-full border rounded p-2 text-gray-600"
             />
@@ -336,8 +334,8 @@ const Survey: React.FC = () => {
           <div className="w-full md:w-1/2 px-4 mb-6">
             <RequiredLabel text="Gender Preference" />
             <select
-              name="genderPreference"
-              value={formData.genderPreference}
+              name="gender_preference"
+              value={formData.gender_preference}
               onChange={handleChange}
               className="w-full border rounded p-2 text-gray-600"
             >
@@ -364,9 +362,9 @@ const Survey: React.FC = () => {
               className="w-full border rounded p-2 text-gray-600"
             >
               <option value="">Select your year</option>
-              <option value="Freshman">Incoming Freshman</option>
-              <option value="Sophomore">Incoming Sophomore</option>
-              <option value="Junior">Incoming Upperclassman</option>
+              <option value="Incoming Freshman">Incoming Freshman</option>
+              <option value="Incoming Sophomore">Incoming Sophomore</option>
+              <option value="Incoming Upperclassmen">Incoming Upperclassman</option>
             </select>
             {errors.year && (
               <span className="text-red-500 text-sm">{errors.year}</span>
@@ -397,8 +395,8 @@ const Survey: React.FC = () => {
           <div className="w-full md:w-1/2 px-4 mb-6">
             <RequiredLabel text="Preferred Roommate Major" />
             <select
-              name="roommateMajor"
-              value={formData.roommateMajor}
+              name="major_preference"
+              value={formData.major_preference}
               onChange={handleChange}
               className="w-full border rounded p-2 text-gray-600"
             >
@@ -422,8 +420,8 @@ const Survey: React.FC = () => {
           <div className="w-full md:w-1/2 px-4 mb-6">
             <RequiredLabel text="Sleep Time" />
             <select
-              name="sleepTime"
-              value={formData.sleepTime}
+              name="sleep"
+              value={formData.sleep}
               onChange={handleChange}
               className="w-full border rounded p-2 text-gray-600"
             >
@@ -442,8 +440,8 @@ const Survey: React.FC = () => {
           <div className="w-full md:w-1/2 px-4 mb-6">
             <RequiredLabel text="Cleanliness" />
             <select
-              name="cleanliness"
-              value={formData.cleanliness}
+              name="clean"
+              value={formData.clean}
               onChange={handleChange}
               className="w-full border rounded p-2 text-gray-600"
             >
@@ -462,8 +460,8 @@ const Survey: React.FC = () => {
           <div className="w-full md:w-1/2 px-4 mb-6">
             <RequiredLabel text="Noise Level" />
             <select
-              name="noiseLevel"
-              value={formData.noiseLevel}
+              name="noise"
+              value={formData.noise}
               onChange={handleChange}
               className="w-full border rounded p-2 text-gray-600"
             >
@@ -506,8 +504,8 @@ const Survey: React.FC = () => {
           <div className="w-full md:w-1/2 px-4 mb-6">
             <RequiredLabel text="Religious Preference" />
             <select
-              name="religionPreferences"
-              value={formData.religionPreferences}
+              name="religion_preference"
+              value={formData.religion_preference}
               onChange={handleChange}
               className="w-full border rounded p-2 text-gray-600"
             >
@@ -535,8 +533,8 @@ const Survey: React.FC = () => {
           <div className="w-full md:w-1/2 px-4 mb-6">
             <RequiredLabel text="Preferred Language" />
             <select
-              name="languagePreferences"
-              value={formData.languagePreferences}
+              name="language"
+              value={formData.language}
               onChange={handleChange}
               className="w-full border rounded p-2 text-gray-600"
             >
@@ -562,8 +560,8 @@ const Survey: React.FC = () => {
           <div className="w-full md:w-1/2 px-4 mb-6">
             <RequiredLabel text="Smoking" />
             <select
-              name="smoking"
-              value={formData.smoking}
+              name="smoke"
+              value={formData.smoke}
               onChange={handleChange}
               className="w-full border rounded p-2 text-gray-600"
             >
@@ -580,8 +578,8 @@ const Survey: React.FC = () => {
           <div className="w-full md:w-1/2 px-4 mb-6">
             <RequiredLabel text="Smoking Preference" />
             <select
-              name="smokingPreference"
-              value={formData.smokingPreference}
+              name="against_smoker"
+              value={formData.against_smoker}
               onChange={handleChange}
               className="w-full border rounded p-2 text-gray-600"
             >
@@ -600,8 +598,8 @@ const Survey: React.FC = () => {
           <div className="w-full md:w-1/2 px-4 mb-6">
             <RequiredLabel text="Drinking" />
             <select
-              name="drinking"
-              value={formData.drinking}
+              name="drink"
+              value={formData.drink}
               onChange={handleChange}
               className="w-full border rounded p-2 text-gray-600"
             >
@@ -618,8 +616,8 @@ const Survey: React.FC = () => {
           <div className="w-full md:w-1/2 px-4 mb-6">
             <RequiredLabel text="Drinking Preference" />
             <select
-              name="drinkingPreference"
-              value={formData.drinkingPreference}
+              name="against_drinker"
+              value={formData.against_drinker}
               onChange={handleChange}
               className="w-full border rounded p-2 text-gray-600"
             >
@@ -638,14 +636,14 @@ const Survey: React.FC = () => {
           <div className="w-full md:w-1/2 px-4 mb-6">
             <RequiredLabel text="Cooking" />
             <select
-              name="cooking"
-              value={formData.cooking}
+              name="cook"
+              value={formData.cook}
               onChange={handleChange}
               className="w-full border rounded p-2 text-gray-600"
             >
               <option value="">How often do you cook?</option>
               <option value="Never">Never</option>
-              <option value="1-2 times/week">1-2 times/week</option>
+              
               <option value="3-4 times/week">3-4 times/week</option>
               <option value="Everyday">Everyday</option>
             </select>
@@ -653,13 +651,14 @@ const Survey: React.FC = () => {
               <span className="text-red-500 text-sm">{errors.cooking}</span>
             )}
           </div>
-
+          
+          
           {/* Greek Life */}
           <div className="w-full md:w-1/2 px-4 mb-6">
             <RequiredLabel text="Greek Life" />
             <select
-              name="greekLife"
-              value={formData.greekLife}
+              name="greeklife"
+              value={formData.greeklife}
               onChange={handleChange}
               className="w-full border rounded p-2 text-gray-600"
             >
@@ -698,8 +697,8 @@ const Survey: React.FC = () => {
           <div className="w-full md:w-1/2 px-4 mb-6">
             <RequiredLabel text="Roommate Politics" />
             <select
-              name="roommatePolitics"
-              value={formData.roommatePolitics}
+              name="politics_preference"
+              value={formData.politics_preference}
               onChange={handleChange}
               className="w-full border rounded p-2 text-gray-600"
             >
@@ -743,8 +742,8 @@ const Survey: React.FC = () => {
           <div className="w-full md:w-1/2 px-4 mb-6">
             <RequiredLabel text="Pet Preference" />
             <select
-              name="petPreference"
-              value={formData.petPreference}
+              name="against_pet"
+              value={formData.against_pet}
               onChange={handleChange}
               className="w-full border rounded p-2 text-gray-600"
             >
@@ -783,14 +782,14 @@ const Survey: React.FC = () => {
           <div className="w-full md:w-1/2 px-4 mb-6">
             <RequiredLabel text="On/Off Campus" />
             <select
-              name="campus"
-              value={formData.campus}
+              name="housing"
+              value={formData.housing}
               onChange={handleChange}
               className="w-full border rounded p-2 text-gray-600"
             >
               <option value="">Do you plan on living off or on campus?</option>
-              <option value="On-campus">On-campus</option>
-              <option value="Off-campus">Off-campus</option>
+              <option value="On-Campus">On-Campus</option>
+              <option value="Off-Campus">Off-Campus</option>
             </select>
             {errors.campus && (
               <span className="text-red-500 text-sm">{errors.campus}</span>
@@ -817,7 +816,7 @@ const Survey: React.FC = () => {
           {/* Most Important Factors */}
           <div className="w-full md:w-1/2 px-4 mb-6 text-gray-700">
             <RequiredLabel text="Which factors are most important to you?" />
-            {["ranking1", "ranking2", "ranking3"].map((rank, i) => (
+            {["top_1", "top_2", "top_3"].map((rank, i) => (
               <div key={rank} className="mb-4">
                 <label className="block text-gray-600 mb-1">
                 Top {i + 1} 
@@ -843,24 +842,24 @@ const Survey: React.FC = () => {
           </div>
 
           {/* Agreement Checkbox */}
-          <div className="w-full px-4 flex items-center mb-6">
-            <input
-              type="checkbox"
-              name="agree"
-              checked={formData.agree}
-              onChange={handleChange}
-              className="mr-2"
-            />
-            <label className="text-sm text-gray-700">
-              I agree to share my contact information and answers to help find the best match{" "}
-              <span className="text-red-500">*</span>
-            </label>
-            {errors.agree && (
-              <span className="text-red-500 text-sm ml-2">
-                {errors.agree}
-              </span>
-            )}
-          </div>
+          { /* <div className="w-full px-4 flex items-center mb-6">}
+           // </div><input
+             // type="checkbox"
+             // name="agree"
+              //checked={formData.agree}
+              //onChange={handleChange}
+              //className="mr-2"
+           // />
+            //<label className="text-sm text-gray-700">
+           //   I agree to share my contact information and answers to help find the best match{" "}
+           //   <span className="text-red-500">*</span>
+           // </label>
+           // {errors.agree && (
+           //   <span className="text-red-500 text-sm ml-2">
+            //    {errors.agree}
+            //  </span>
+            //)}
+         // </div>
 
           {/* Submit Button */}
           <div className="w-full text-center px-4 mt-6">

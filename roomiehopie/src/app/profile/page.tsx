@@ -54,28 +54,19 @@ export default function ProfilePage() {
   
     setIsLoading(true);
     try {
-      // Ensure this URL and method match your backend configuration
-      const res = await fetch("https://104.45.197.195:8000/update_user", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const response = await fetch('/api/update_user', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updatedProfile),
       });
-      const result = await res.json();
-      if (result.success) {
-        // Update the context with the new data
-        setProfile(updatedProfile);
-        // Immediately reload or re-render the component
-        window.location.reload();
-      } else {
-        alert("Error updating profile: " + result.error);
-        setIsLoading(false);
-      }
+      const result = await response.json();
+      console.log('User update result:', result);
+      return result;
     } catch (error) {
-      console.error("Error updating profile:", error);
-      alert("Error updating profile. Please try again.");
-      setIsLoading(false);
+      console.error('Error updating user:', error);
+      return null;
     }
-  };
+  }
   
 
   // Sign out the user and redirect to login.
