@@ -2,7 +2,7 @@
 
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import React, { CSSProperties } from "react";
+import React, { CSSProperties, useEffect } from "react";
 
 interface Styles {
   container: CSSProperties;
@@ -57,7 +57,6 @@ const styles: Styles = {
     width: "fit-content",
     alignSelf: "center",
   },
-  // Continue button style with a different color (green in this case)
   continueButton: {
     padding: "10px 40px",
     border: "none",
@@ -73,6 +72,42 @@ const styles: Styles = {
 export default function LoginPage() {
   const { data: session } = useSession();
   const router = useRouter();
+
+  // Function to handle Continue button logic
+  const handleContinue = async () => {
+    if (session?.user?.email) {
+      const response = await fetch(`/api/user?user=${session.user.email}`);
+      const userData = await response.json();
+
+      if (userData && userData.id) {
+        // Call the API to create JWT token for the user
+        const tokenResponse = await fetch('/api/auth/createJWT', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userID: userData.id })
+        });
+        const tokenData = await tokenResponse.json();
+
+        if (tokenData.token) {
+          document.cookie = `user_token=${tokenData.token}; path=/; HttpOnly`; // HttpOnly cookie for security
+
+          checkIfUserCompletedSurvey(userData.id);
+        }
+      }
+    }
+  };
+
+  // Check if user completed the survey
+  const checkIfUserCompletedSurvey = async (userID: string) => {
+    const res = await fetch(`/api/survey/completed?userID=${userID}`);
+    const data = await res.json();
+
+    if (data.completed) {
+      router.push("/match");
+    } else {
+      router.push("/survey");
+    }
+  };
 
   return (
     <div style={styles.container}>
@@ -90,7 +125,7 @@ export default function LoginPage() {
             />
             <p style={styles.text}>Email: {session.user?.email}</p>
             <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "10px" }}>
-              <button style={styles.continueButton} onClick={() => router.push("/")}>
+              <button style={styles.continueButton} onClick={handleContinue}>
                 Continue
               </button>
               <button style={styles.button} onClick={() => signOut()}>
