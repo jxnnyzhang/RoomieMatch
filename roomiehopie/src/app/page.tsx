@@ -1,33 +1,24 @@
 "use client";
 
+import { useSession } from "next-auth/react";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 export default function HomePage() {
+  const { data: session, status } = useSession(); // Get session data from NextAuth
   const router = useRouter();
 
   useEffect(() => {
-    checkUserAuthentication();
-  }, [router]);
+    if (status === "loading") return; // Wait for session loading to complete
 
-  const checkUserAuthentication = async () => {
-    const token = document.cookie.split(';').find(cookie => cookie.trim().startsWith('user_token='));
-
-    if (token) {
-      const userID = decodeJWT(token.split('=')[1]);
-
-      if (userID) {
-        checkIfUserCompletedSurvey(userID);
-      }
+    if (session?.user?.userID) {
+      // If the session has a userID, check if the user has completed the survey
+      checkIfUserCompletedSurvey(session.user.userID);
     } else {
-      router.push("/login"); // Redirect to login if no token
+      // If the session or userID is missing, redirect to login
+      router.push("/login");
     }
-  };
-
-  const decodeJWT = (token: string) => {
-    const payload = JSON.parse(atob(token.split('.')[1]));
-    return payload.userID; // Assuming the JWT contains userID
-  };
+  }, [session, status, router]);
 
   const checkIfUserCompletedSurvey = async (userID: string) => {
     const res = await fetch(`/api/survey/completed?userID=${userID}`);

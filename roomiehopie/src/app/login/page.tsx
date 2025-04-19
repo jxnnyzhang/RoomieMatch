@@ -84,7 +84,7 @@ export default function LoginPage() {
         const tokenResponse = await fetch('/api/auth/createJWT', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ userID: userData.id })
+          body: JSON.stringify({ userID: userData.id, email: session.user.email, name: session.user.name })
         });
         const tokenData = await tokenResponse.json();
 
