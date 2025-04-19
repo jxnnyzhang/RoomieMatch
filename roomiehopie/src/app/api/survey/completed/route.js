@@ -1,26 +1,32 @@
-// /pages/api/survey/completed.js
-import { NextResponse } from 'next/server';
+// src/app/api/survey/completed/route.js
+import { NextResponse } from "next/server";
 
 export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url);
-    const userID = searchParams.get('userID');
+    const userID = searchParams.get("userID");
 
     if (!userID) {
-      return NextResponse.json({ error: "User ID is required" }, { status: 400 });
+      return NextResponse.json(
+        { error: "User ID is required" },
+        { status: 400 }
+      );
     }
 
-    // Implement the actual logic to check if the user has completed the survey
+    // TODO: replace this with your real DB/API check
     const isCompleted = await checkSurveyCompletion(userID);
 
     return NextResponse.json({ completed: isCompleted });
   } catch (error) {
     console.error("Error checking survey completion:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
   }
 }
 
 async function checkSurveyCompletion(userID) {
-  // Replace this with your actual logic to check if the user has completed the survey
-  return userID === "someUserID" ? true : false; // Example logic
+  // Replace with your logic (e.g. fetch from Flask or your DB)
+  return userID === "someUserID";
 }
