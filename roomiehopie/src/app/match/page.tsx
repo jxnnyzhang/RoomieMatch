@@ -1,76 +1,76 @@
-"use client";
+// File: src/app/match/page.tsx
+'use client';
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useProfile } from "../context/ProfileContext";
 
-const sampleMatches = [
-  {
-    name: "Jane Doe",
-    matchPercent: 92,
-    bio: "Loves hiking, cooking, and spontaneous road trips.",
-  },
-  {
-    name: "John Smith",
-    matchPercent: 85,
-    bio: "Avid reader, coffee enthusiast, and tech geek.",
-  },
-  {
-    name: "Emily Johnson",
-    matchPercent: 78,
-    bio: "Passionate about art, music, and outdoor adventures.",
-  },
-];
+interface Match {
+  score: number;
+  user_id: string;
+}
 
 export default function MatchPage() {
+  const [matches, setMatches] = useState<Match[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const { profileImage } = useProfile();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
+
+    async function loadMatches() {
+      try {
+        const res = await fetch("/api/match");
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data: Match[] = await res.json();
+        setMatches(data);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    loadMatches();
   }, []);
 
   const handlePrevious = () => {
     setCurrentIndex((prev) =>
-      prev === 0 ? sampleMatches.length - 1 : prev - 1
+      prev === 0 ? matches.length - 1 : prev - 1
     );
   };
 
   const handleNext = () => {
     setCurrentIndex((prev) =>
-      prev === sampleMatches.length - 1 ? 0 : prev + 1
+      prev === matches.length - 1 ? 0 : prev + 1
     );
   };
 
   const handleReject = () => {
-    alert(`You rejected ${sampleMatches[currentIndex].name}.`);
-    handleNext();
-  };
-
-  const handleStar = () => {
-    alert(`You starred ${sampleMatches[currentIndex].name}!`);
+    alert(`You rejected ${matches[currentIndex].user_id}.`);
     handleNext();
   };
 
   const handleAccept = () => {
-    alert(`You accepted ${sampleMatches[currentIndex].name}!`);
+    alert(`You accepted ${matches[currentIndex].user_id}!`);
     handleNext();
   };
 
-  const { name, matchPercent, bio } = sampleMatches[currentIndex];
-
-  if (!mounted) {
+  // don't render until we have at least one match and we're on the client
+  if (!mounted || matches.length === 0) {
     return null;
   }
 
+  const { score, user_id } = matches[currentIndex];
+  console.log(matches[currentIndex])
   return (
     <div className="relative min-h-screen bg-orange-200 flex flex-col items-center justify-center p-4">
       {/* Profile icon linking to the Profile page */}
       <Link href="/profile">
         <div className="absolute top-4 right-4 bg-white p-2 sm:p-3 rounded-full shadow-lg cursor-pointer hover:bg-gray-100 transition">
           {profileImage ? (
-            <img suppressHydrationWarning={true} src={profileImage}
+            <img
+              suppressHydrationWarning={true}
+              src={profileImage}
               alt="Profile"
               className="w-10 h-10 sm:w-10 sm:h-10 rounded-full object-cover"
             />
@@ -99,27 +99,24 @@ export default function MatchPage() {
       <div className="relative w-full max-w-[800px]">
         {/* Main image card with responsive aspect ratio */}
         <div className="relative w-full h-0 pb-[68.75%] bg-white rounded-xl shadow-xl overflow-hidden flex flex-col justify-end">
-          {/* Image placeholder */}
-          <div className="absolute inset-0 flex items-center justify-center">
-            <span className="text-gray-400 text-base sm:text-lg">
-              [ Image Placeholder ]
-            </span>
-          </div>
+          {/* Image or placeholder */}
+          
+            <div className="absolute inset-0 flex items-center justify-center">
+              <span className="text-gray-400 text-base sm:text-lg">
+                [ Image Placeholder ]
+              </span>
+            </div>
+          
 
           {/* Overlay for name and match percentage */}
           <div className="absolute top-0 left-0 w-full p-4 bg-gradient-to-b from-black/40 to-transparent text-white">
             <h2 className="font-bold text-lg sm:text-xl">
-              {name}, {matchPercent}% match
+              {user_id}, {score}% match
             </h2>
-          </div>
-
-          {/* Bio area */}
-          <div className="bg-gradient-to-t from-white via-white to-transparent p-4">
-            <p className="text-gray-700 text-sm sm:text-base">{bio}</p>
           </div>
         </div>
 
-        {/* Left arrow button (circular, fixed size) */}
+        {/* Left arrow button */}
         <button
           onClick={handlePrevious}
           aria-label="Previous Match"
@@ -144,7 +141,7 @@ export default function MatchPage() {
           </svg>
         </button>
 
-        {/* Right arrow button (circular, fixed size) */}
+        {/* Right arrow button */}
         <button
           onClick={handleNext}
           aria-label="Next Match"
@@ -170,9 +167,8 @@ export default function MatchPage() {
         </button>
       </div>
 
-      {/* Bottom controls: Reject (red X), Star (blue), Accept (green check) */}
+      {/* Bottom controls: Reject, Star, Accept */}
       <div className="flex items-center space-x-4 mt-6">
-        {/* Reject button (circular) */}
         <button
           onClick={handleReject}
           aria-label="Reject"
@@ -197,8 +193,6 @@ export default function MatchPage() {
           </svg>
         </button>
 
-
-        {/* Accept button (circular) */}
         <button
           onClick={handleAccept}
           aria-label="Accept"
@@ -221,16 +215,15 @@ export default function MatchPage() {
               d="M5 13l4 4L19 7"
             />
           </svg>
-        </button>  
+        </button>
       </div>
-      {/* Bottom navigation bar flush with bottom, 2/3 width, 
-          rounded top corners, no border */}
+
+      {/* Bottom navigation bar */}
       <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 
                       w-2/3 shadow-md bg-white 
                       flex justify-around items-center 
                       rounded-t-full rounded-b-none
                       py-3 z-10">
-        {/* Match tab */}
         <Link href="/match" className="flex flex-col items-center space-y-1">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -250,7 +243,6 @@ export default function MatchPage() {
           <span className="text-xs font-medium text-gray-800">Match</span>
         </Link>
 
-        {/* Matched tab */}
         <Link href="/matched" className="flex flex-col items-center space-y-1">
           <svg
             xmlns="http://www.w3.org/2000/svg"
