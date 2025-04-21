@@ -1,12 +1,32 @@
 # Main Flask App  
+# Run in local testing mode: flask --app app --debug run
+import os
+import sys
 import sqlite3
 import flask
 from flask import Flask, request, jsonify
 import match
+from flask_cors import CORS
 
-DATABASE_PATH = 'roomie_match.db'
+DATABASE_PATH = 'roomie_match.db' if os.getenv('FLASK_DEBUG') else '/home/site/wwwroot/roomie_match.db'
+
+# create the database if it doesn't exist
+# (this is important for production deployment on azure)
+if not os.path.exists(DATABASE_PATH):
+    conn = sqlite3.connect(DATABASE_PATH)
+    cursor = conn.cursor()
+
+    with open("CreateDB.SQL") as f:
+        cursor.executescript(f.read())
+
+    conn.commit()
+    conn.close()
 
 app = Flask(__name__)
+
+# Allow requests from frontend URL 
+# CORS(app, origins="https://roomiehopie.vercel.app") 
+CORS(app, origins="*")
 
 def get_db():
     db = getattr(flask, '_database', None)
@@ -38,7 +58,14 @@ def create_user():
     try:
         # setting userID to none will cause it to automatically be filled in by the database
         user_data['userID'] = None
-        cursor.execute("""INSERT INTO roommate_profiles VALUES (
+        # allow this to be automatic too
+        cursor.execute("""INSERT INTO roommate_profiles(
+                userID,
+                firstname, lastname, case_email, gender, gender_preference, housing, year, major, major_preference,
+                clean, noise, sleep, greeklife, guests, language, cook, smoke, against_smoker, drink, against_drinker,
+                pets, against_pet, politics, politics_preference, religion,
+                religion_preference, bio, top_1, top_2, top_3, profile_pic
+            ) VALUES (
             :userID,
             :firstname, :lastname, :case_email, :gender, :gender_preference, :housing, :year, :major, :major_preference,
             :clean, :noise, :sleep, :greeklife, :guests, :language, :cook, :smoke, :against_smoker, :drink, :against_drinker,
@@ -78,12 +105,26 @@ def get_matches():
 
 @app.route('/user', methods=['GET'])
 def user():
+    # Check if the userID parameter is provided in the request
     user_id = int(request.args.get("user"))
-
+    if not user_id:
+        return jsonify({"error": "User ID is required"}), 400
+    try:
+        user_id = int(user_id) # Convert to integer 
+    except ValueError:
+        return jsonify({"error": "Invalid user ID"}), 400
+    
+    # Create cursor and fetch the user data
     cursor = get_db().cursor()
-    user_data = match.get_user(cursor, user_id)
-
-    return jsonify(user_data)
+    try:
+        user_data = match.get_user(cursor, user_id) # Fetch user data from db 
+        # Fetch user hobbies (pass user_id as argument)
+        hobbies = match.get_user_hobbies(cursor, user_id) # Pass cursor and user_id
+        user_data['hobbies'] = list(hobbies)
+        return jsonify(user_data)
+    
+    except Exception as e:
+        return jsonify({"error": f"Error fetching user data: {str(e)}"}), 500
 
 @app.route('/accept', methods=['POST'])
 def accept():
@@ -112,9 +153,6 @@ def reject():
     conn.commit()
     return jsonify({"message": "Match rejected. "}), 200
 
-if __name__ == '__main__':
-    app.run(debug=True)
-
 # Delete a user from any table (handles cascading deletes) 
 @app.route('/delete', methods=['DELETE'])
 def delete():
@@ -130,3 +168,22 @@ def delete():
     conn.commit()
 
     return jsonify({"message": "User deleted successfully."}), 200
+
+@app.route('/get_mutuals', methods=['GET'])
+def get_mutuals():
+    user_id = int(request.args.get("user"))
+    cursor = get_db().cursor()
+
+    query = """SELECT u2.userID
+               FROM user_accepted r1
+               INNER JOIN user_accepted r2 ON r1.acceptedUserID = r2.userID
+               INNER JOIN roommate_profiles u2 ON r2.userID = u2.userID
+               WHERE r1.userID = ? AND r2.acceptedUserID = ?"""
+
+    cursor.execute(query, (user_id, user_id))
+    results = [row[0] for row in cursor.fetchall()]
+
+    return jsonify(results)
+
+if __name__ == '__main__':
+    app.run()
