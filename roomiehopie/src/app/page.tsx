@@ -1,12 +1,12 @@
 "use client";
 
-import { useSession } from "next-auth/react";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 export default function HomePage() {
-  const { data: session, status } = useSession(); // Get session data from NextAuth
   const router = useRouter();
+  const { data: session, status } = useSession();
 
   useEffect(() => {
     if (status === "loading") return; // Wait for session loading to complete
