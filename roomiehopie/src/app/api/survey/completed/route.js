@@ -1,10 +1,10 @@
-// src/app/api/survey/completed/route.js
 import { NextResponse } from "next/server";
 
+// Main GET handler for the /completed endpoint
 export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url);
-    const userID = searchParams.get("userID");
+    const userID = searchParams.get("userID"); // Get userID from the query parameters
 
     if (!userID) {
       return NextResponse.json(
@@ -13,7 +13,7 @@ export async function GET(request) {
       );
     }
 
-    // TODO: replace this with your real DB/API check
+    // Fetch if the user has completed the survey
     const isCompleted = await checkSurveyCompletion(userID);
 
     return NextResponse.json({ completed: isCompleted });
@@ -26,7 +26,30 @@ export async function GET(request) {
   }
 }
 
+// Function to check if the user has completed the survey
 async function checkSurveyCompletion(userID) {
-  // Replace with your logic (e.g. fetch from Flask or your DB)
-  return userID === "someUserID";
+  // Fetch user data using the provided userID (like how the match route does it)
+  const response = await fetch(
+    `https://roomiematch-h4grfpd8d7cwbufb.eastus2-01.azurewebsites.net/user?user=${userID}`,
+    { method: "GET" }
+  );
+  
+  if (!response.ok) {
+    // If the request failed, log the error and return false
+    console.error(`Failed to fetch user data: ${response.statusText}`);
+    return false;
+  }
+
+  const userData = await response.json();
+
+  // Handle the structure: Object { score: 0, user_id: 13 }
+  const userIdFromResponse = userData?.user_id;
+
+  if (userIdFromResponse) {
+    // Check if the user has completed the survey based on userData
+    return userData.surveyCompleted === true;
+  } else {
+    console.error("User ID not found in the response:", userData);
+    return false;
+  }
 }

@@ -2,7 +2,7 @@
 
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import React, { CSSProperties, useEffect } from "react";
+import React, { CSSProperties, useState } from "react";
 
 interface Styles {
   container: CSSProperties;
@@ -12,6 +12,7 @@ interface Styles {
   avatar: CSSProperties;
   button: CSSProperties;
   continueButton: CSSProperties;
+  errorText: CSSProperties;
 }
 
 const styles: Styles = {
@@ -67,45 +68,70 @@ const styles: Styles = {
     width: "fit-content",
     alignSelf: "center",
   },
+  errorText: {
+    color: "red",
+    marginTop: "10px",
+    fontSize: "14px"
+  }
 };
 
 export default function LoginPage() {
   const { data: session } = useSession();
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // Function to handle Continue button logic
   const handleContinue = async () => {
+    setLoading(true);
+    setError(null);
+    
     if (session?.user?.email) {
-      const response = await fetch(`/api/user?user=${session.user.email}`);
-      const userData = await response.json();
-
-      if (userData && userData.id) {
-        // Call the API to create JWT token for the user
-        const tokenResponse = await fetch('/api/auth/createJWT', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ userID: userData.id, email: session.user.email, name: session.user.name })
-        });
-        const tokenData = await tokenResponse.json();
-
-        if (tokenData.token) {
-          document.cookie = `user_token=${tokenData.token}; path=/; HttpOnly`; // HttpOnly cookie for security
-
-          checkIfUserCompletedSurvey(userData.id);
+      try {
+        console.log(`Fetching user data for email: ${session.user.email}`);
+        
+        // Use "case_email" parameter as expected by the API
+        const response = await fetch(`/api/user?case_email=${session.user.email}`);
+        
+        // Check if the status is in the successful range (200-299)
+        if (response.ok) {
+          try {
+            const responseText = await response.text();
+            
+            // If we got a response with content
+            if (responseText && responseText.trim()) {
+              const userData = JSON.parse(responseText);
+              console.log("User data received:", userData);
+              
+              // Check if matches exist
+              if (userData.surveyCompleted) {
+                router.push("/match");
+              } else {
+                router.push("/survey");
+              }
+            } else {
+              // Empty response - go to survey
+              console.log("Empty response, directing to survey");
+              router.push("/survey");
+            }
+          } catch (parseError) {
+            // JSON parsing error - go to survey
+            console.error("JSON parsing error, directing to survey:", parseError);
+            router.push("/survey");
+          }
+        } else {
+          // HTTP error - go to survey
+          console.error("HTTP error, directing to survey:", response.status);
+          router.push("/survey");
         }
+      } catch (error) {
+        // Network or other error - go to survey
+        console.error("Error fetching user data, directing to survey:", error);
+        router.push("/survey");
       }
-    }
-  };
-
-  // Check if user completed the survey
-  const checkIfUserCompletedSurvey = async (userID: string) => {
-    const res = await fetch(`/api/survey/completed?userID=${userID}`);
-    const data = await res.json();
-
-    if (data.completed) {
-      router.push("/match");
     } else {
-      router.push("/survey");
+      setError("Session data is missing. Please try signing in again.");
+      setLoading(false);
     }
   };
 
@@ -116,21 +142,24 @@ export default function LoginPage() {
         {session ? (
           <div>
             <p style={styles.text}>Welcome, {session.user?.name}!</p>
-            <img
-              style={styles.avatar}
-              src={session.user?.image ?? ""}
-              alt="Profile"
-              width={100}
-              height={100}
-            />
+            {session.user?.image && (
+              <img
+                style={styles.avatar}
+                src={session.user.image}
+                alt="Profile"
+                width={100}
+                height={100}
+              />
+            )}
             <p style={styles.text}>Email: {session.user?.email}</p>
             <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "10px" }}>
-              <button style={styles.continueButton} onClick={handleContinue}>
-                Continue
+              <button style={styles.continueButton} onClick={handleContinue} disabled={loading}>
+                {loading ? "Loading..." : "Continue"}
               </button>
               <button style={styles.button} onClick={() => signOut()}>
                 Sign Out
               </button>
+              {error && <p style={styles.errorText}>{error}</p>}
             </div>
           </div>
         ) : (
