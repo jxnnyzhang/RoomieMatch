@@ -117,10 +117,6 @@ export default function MatchPage() {
         console.log("fetched user info:", info);
         setMatchUser(info);
       })
-      .then((info: UserInfo) => {
-        console.log("fetched user info:", info);
-        setMatchUser(info);
-      })
       .catch(console.error);
   }, [currentIndex, matches]);
 
@@ -175,9 +171,8 @@ export default function MatchPage() {
     }
   };
 
-  if (!mounted || matches.length === 0 ) return null;
+  if (!mounted || matches.length === 0 || !matchUser) return null;
 
-  const { score } = matches[currentIndex];
   // 2) Safely wrap around demoImageUrls if matches > images:
   const imgSrc =
     demoImageUrls[currentIndex % demoImageUrls.length];
