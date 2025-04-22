@@ -3,6 +3,49 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useProfile } from "../context/ProfileContext";
+import { userInfo } from "os";
+
+interface Match {
+  score: number;
+  room_id: string;
+}
+
+export interface UserInfo {
+  against_drinker: string;
+  against_pet: string;
+  against_smoker: string;
+  bio: string;
+  case_email: string;
+  clean: string;
+  cook: string;
+  drink: string;
+  firstname: string;
+  gender: string;
+  gender_preference: string;
+  greeklife: string;
+  guests: string;
+  hobbies: number[];
+  housing: string;
+  language: string;
+  lastname: string;
+  major: string;
+  major_preference: string;
+  noise: string;
+  pets: string;
+  politics: string;
+  politics_preference: string;
+  profile_pic: string;
+  religion: string;
+  religion_preference: string;
+  sleep: string;
+  smoke: string;
+  submission_timestamp: string;
+  top_1: string;
+  top_2: string;
+  top_3: string;
+  userID: number;
+  year: string;
+}
 
 const sampleMatches = [
   {
@@ -29,14 +72,68 @@ const sampleMatches = [
 ];
 
 export default function MatchPage() {
+  const [matches, setMatches] = useState<Match[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const { profileImage } = useProfile();
   const [mounted, setMounted] = useState(false);
   const [isFlipped, setIsFlipped] = useState(false);
+  const [matchUser, setMatchUser] = useState<UserInfo | null>(null);
+  
 
   useEffect(() => {
     setMounted(true);
+    async function loadMatches() {
+    
+      try {
+        const userId = sessionStorage.getItem("userId");
+  
+        console.log(userId)
+        if (!userId) {throw new Error('No userId found in sessionStorage');}
+  
+        const res = await fetch(`/api/mutual_matches?userId=${encodeURIComponent(userId)}`, {
+          method: 'GET',
+          headers: {
+          'Content-Type': 'application/json',
+          },
+        })
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const raw: { user_id: string; score: number }[] = await res.json();
+  
+        // Map each { user_id, score } → { room_id, score }
+        const data: Match[] = raw.map(({ user_id, score }) => ({room_id: user_id,score,}));
+        setMatches(data);
+        } 
+      catch (err) {
+          console.error(err);
+        }
+    }
+  
+      loadMatches();
   }, []);
+  
+  useEffect(() => {
+    if (!matches.length) return;
+    
+    const {room_id } = matches[currentIndex];
+    console.log(room_id)
+    const case_email = sessionStorage.getItem("caseEmail");
+    if (!case_email) {throw new Error('No userId found in sessionStorage');}
+    fetch(`/api/user_id/${room_id}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    .then((r) => {
+      if (!r.ok) throw new Error(r.statusText);
+      return r.json();
+    })
+    .then((info: UserInfo) => {
+      console.log("fetched user info:", info);
+      setMatchUser(info);
+    })
+    .catch(console.error);
+  }, [currentIndex, matches]);
 
   const handlePrevious = () => {
     setCurrentIndex((prev) =>
@@ -52,10 +149,7 @@ export default function MatchPage() {
     setIsFlipped(false);
   };
 
-  const { name, matchPercent, bio, contact, surveyPreview } =
-    sampleMatches[currentIndex];
-
-  if (!mounted) {
+  if (!mounted || !matchUser) {
     return null;
   }
 
@@ -118,13 +212,13 @@ export default function MatchPage() {
               {/* Overlay for name and match percentage */}
               <div className="absolute top-0 left-0 w-full p-4 bg-gradient-to-b from-black/40 to-transparent text-white">
                 <h2 className="font-bold text-lg sm:text-xl">
-                  {name}, {matchPercent}% match
+                  {matchUser.firstname}, {matches[currentIndex].score}% match
                 </h2>
               </div>
 
               {/* Bio area */}
               <div className="bg-gradient-to-t from-white via-white to-transparent p-4">
-                <p className="text-gray-700 text-sm sm:text-base">{bio}</p>
+                <p className="text-gray-700 text-sm sm:text-base">{matchUser.bio}</p>
               </div>
             </div>
 
@@ -135,14 +229,14 @@ export default function MatchPage() {
             >
               {/* User's name at the top */}
               <div className="absolute top-12 left-0 right-0 p-14 text-center">
-                <h2 className="text-2xl text-gray-700 font-bold">{name}</h2>
+                <h2 className="text-2xl text-gray-700 font-bold">{matchUser.firstname}</h2>
               </div>
               {/* Contact information and survey preview */}
               <div className="flex flex-col justify-center items-center h-full p-4 text-center">
                 <h3 className="text-xl text-gray-700 font-bold mb-2">Contact Information</h3>
-                <p className="text-gray-700 mb-4">{contact}</p>
+                <p className="text-gray-700 mb-4">{matchUser.case_email}</p>
                 <h3 className="text-xl text-gray-700 font-bold mb-2">Bio</h3>
-                <p className="text-gray-700">{surveyPreview}</p>
+                <p className="text-gray-700">{}</p>
               </div>
             </div>
           </div>

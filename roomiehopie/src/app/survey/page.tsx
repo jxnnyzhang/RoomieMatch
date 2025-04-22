@@ -5,7 +5,6 @@ import MultiSelectCheckbox from "../MultiSelectCheckbox";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
-
 interface FormData {
   top_1: any;
   top_2: any;
@@ -85,7 +84,7 @@ const Survey: React.FC = () => {
     top_3: "",
     housing: "",
     profile_pic: "jpg",
-    bio: ""
+    bio: "bleh"
     //agree: false,
   });
 
@@ -234,25 +233,33 @@ const Survey: React.FC = () => {
     const formErrors = validateForm();
     if (Object.keys(formErrors).length > 0) {
       setErrors(formErrors);
-    } else {
+    } 
+     // 1️⃣ Build a payload, omitting userId if it's null/undefined
+   const payload: any = { ...formData };
+    
+  
+    
       try {
         // 1) POST the form data to our new route
         const res = await fetch("/api/survey", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(formData),
+          body: JSON.stringify(payload),
           
         });
         const result = await res.json();
         console.log(result)
-        console.log("User ID:", result.userID)
-                    
+        console.log("User ID:", result.user)  
+        if (result.user) {
+          sessionStorage.setItem("userId", result.user.toString());
+          sessionStorage.setItem("caseEmail", formData.case_email)
+        }      
         router.push("/match");
       } catch (error) {
         console.error("Error submitting survey:", error);
         // Show an error message to the user if you like
       }
-    }
+    
   };
 
   return (
@@ -512,8 +519,8 @@ const Survey: React.FC = () => {
               <option value="">
                 Do you have a preference for what your roommate's religion should be?
               </option>
-              <option value="Christian">Christianity</option>
-              <option value="Muslim">Islam</option>
+              <option value="Christianity">Christianity</option>
+              <option value="Islam">Islam</option>
               <option value="Judaism">Judaism</option>
               <option value="Hinduism">Hinduism</option>
               <option value="Sikhism">Sikhism</option>

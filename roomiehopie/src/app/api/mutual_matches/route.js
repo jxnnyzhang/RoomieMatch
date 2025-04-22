@@ -21,7 +21,7 @@ export async function GET(request) {
         );
       }
 
-    const MATCHES_API = `https://roomiematch-h4grfpd8d7cwbufb.eastus2-01.azurewebsites.net/get_matches?user=${userId}`
+    const MATCHES_API = `https://roomiematch-h4grfpd8d7cwbufb.eastus2-01.azurewebsites.net/mutual_matches?user=${userId}`
     console.log(MATCHES_API)
   try {
     const res = await fetch(MATCHES_API, {

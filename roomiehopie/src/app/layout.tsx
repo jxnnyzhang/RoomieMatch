@@ -13,11 +13,9 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <ProfileProvider>
-          <AuthProvider>
-            <UserProvider>
+            <AuthProvider>
               {children}
-            </UserProvider>
-          </AuthProvider>
+            </AuthProvider>
         </ProfileProvider>
       </body>
     </html>

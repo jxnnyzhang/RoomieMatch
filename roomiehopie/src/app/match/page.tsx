@@ -1,4 +1,3 @@
-// File: src/app/match/page.tsx
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -7,7 +6,7 @@ import { useProfile } from "../context/ProfileContext";
 
 interface Match {
   score: number;
-  user_id: string;
+  room_id: string;
 }
 
 export interface UserInfo {
@@ -60,9 +59,24 @@ export default function MatchPage() {
 
     async function loadMatches() {
       try {
-        const res = await fetch("/api/match");
+        const userId = sessionStorage.getItem("userId");
+
+        console.log(userId)
+        if (!userId) {
+          throw new Error('No userId found in sessionStorage');
+        }
+
+        const res = await fetch(`/api/match?userId=${encodeURIComponent(userId)}`, {
+          method: 'GET',
+          headers: {
+          'Content-Type': 'application/json',
+            },
+        })
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data: Match[] = await res.json();
+        const raw: { user_id: string; score: number }[] = await res.json();
+
+        // Map each { user_id, score } → { room_id, score }
+        const data: Match[] = raw.map(({ user_id, score }) => ({room_id: user_id,score,}));
         setMatches(data);
       } catch (err) {
         console.error(err);
@@ -74,19 +88,30 @@ export default function MatchPage() {
 
   useEffect(() => {
     if (!matches.length) return;
-
-    const { user_id } = matches[currentIndex];
-    fetch(`/api/user_id/${user_id}`)
+  
+    const {room_id } = matches[currentIndex];
+    console.log(room_id)
+    const case_email = sessionStorage.getItem("caseEmail");
+    if (!case_email) {
+      throw new Error('No userId found in sessionStorage');
+    }
+    fetch(`/api/user_id/${room_id}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
       .then((r) => {
         if (!r.ok) throw new Error(r.statusText);
         return r.json();
       })
-      .then((info: UserInfo) => 
-        {console.log("fetched user info:", info);
-         setMatchUser(info);})
+      .then((info: UserInfo) => {
+        console.log("fetched user info:", info);
+        setMatchUser(info);
+      })
       .catch(console.error);
   }, [currentIndex, matches]);
-
+  
  
   const handlePrevious = () => {
     setCurrentIndex((prev) => (prev === 0 ? matches.length - 1 : prev - 1));
@@ -96,22 +121,54 @@ export default function MatchPage() {
     setCurrentIndex((prev) => (prev === matches.length - 1 ? 0 : prev + 1));
   };
 
-  const handleReject = () => {
-    alert(`You rejected ${matches[currentIndex].user_id}.`);
-    handleNext();
+  async function postDecision(room_id: string, decision: 'accept' | 'reject') {
+    try {
+      const userId = sessionStorage.getItem("userId");
+      console.log(userId)
+      const { room_id } = matches[currentIndex];
+      const res = await fetch(`/api/${decision}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ room_id: room_id, user: userId })
+      });
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text || res.statusText);
+      }
+      return await res.json();
+    } catch (err) {
+      console.error(`Failed to ${decision} ${room_id}:`, err);
+      throw err;
+    }
+  }
+
+  const handleReject = async () => {
+    const { room_id } = matches[currentIndex];
+    try {
+      await postDecision(room_id, 'reject');
+      // move on to next match
+      setCurrentIndex((i) => (i === matches.length - 1 ? 0 : i + 1));
+    } catch {
+      alert('Could not reject right now.');
+    }
   };
 
-  const handleAccept = () => {
-    alert(`You accepted ${matches[currentIndex].user_id}!`);
-    handleNext();
+  const handleAccept = async () => {
+    const { room_id } = matches[currentIndex];
+    try {
+      await postDecision(room_id, 'accept');
+      setCurrentIndex((i) => (i === matches.length - 1 ? 0 : i + 1));
+    } catch {
+      alert('Could not accept right now.');
+    }
   };
 
   // don't render until we have at least one match and we're on the client
-  if (!mounted || matches.length === 0 || !matchUser) {
+  if (!mounted || matches.length === 0 ) {
     return null;
   }
 
-  const { score, user_id } = matches[currentIndex];
+  const { score, room_id } = matches[currentIndex];
   console.log(matches[currentIndex]);
   return (
     <div className="relative min-h-screen bg-orange-200 flex flex-col items-center justify-center p-4">
