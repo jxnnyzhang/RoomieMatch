@@ -53,6 +53,7 @@ const demoImageUrls: string[] = [
   "public/images/kashika.jpg",
   "public/images/jackie.jpg",
   "public/images/jenny.jpg",
+  "public/images/sarina.jpg",
 ];
 
 const sampleMatches = [
