@@ -9,7 +9,7 @@ export async function GET(request, { params }) {
   //console.log(userId.user_id)
   //console.log(`https://roomiematch-h4grfpd8d7cwbufb.eastus2-01.azurewebsites.net/user?user=${userId}`)
   try {
-    const res = await fetch(`https://roomiematch-h4grfpd8d7cwbufb.eastus2-01.azurewebsites.net/user?case_email=${userId}`, 
+    const res = await fetch(`https://roomiematch-h4grfpd8d7cwbufb.eastus2-01.azurewebsites.net/user?user=${userId}`, 
       {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' }

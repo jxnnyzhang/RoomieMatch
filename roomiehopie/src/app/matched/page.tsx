@@ -6,7 +6,6 @@ import { useProfile } from "../context/ProfileContext";
 import { userInfo } from "os";
 
 interface Match {
-  score: number;
   room_id: string;
 }
 
@@ -90,17 +89,18 @@ export default function MatchPage() {
         console.log(userId)
         if (!userId) {throw new Error('No userId found in sessionStorage');}
   
-        const res = await fetch(`/api/mutual_matches?userId=${encodeURIComponent(userId)}`, {
+        const res = await fetch(`/api/mutual_matches?user=${encodeURIComponent(userId)}`, {
           method: 'GET',
           headers: {
           'Content-Type': 'application/json',
           },
         })
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const raw: { user_id: string; score: number }[] = await res.json();
-  
-        // Map each { user_id, score } → { room_id, score }
-        const data: Match[] = raw.map(({ user_id, score }) => ({room_id: user_id,score,}));
+        const raw: number[] = await res.json();     
+
+        // 2. Map each numeric ID into a Match with room_id === that number
+        const data: Match[] = raw.map(id => ({room_id: id.toString(), }));
+
         setMatches(data);
         } 
       catch (err) {
@@ -113,7 +113,11 @@ export default function MatchPage() {
   
   useEffect(() => {
     if (!matches.length) return;
-    
+    if(!matches[currentIndex]) 
+      {
+      alert("No more matches!");
+      return;
+    }
     const {room_id } = matches[currentIndex];
     console.log(room_id)
     const case_email = sessionStorage.getItem("caseEmail");
@@ -150,6 +154,7 @@ export default function MatchPage() {
   };
 
   if (!mounted || !matchUser) {
+    console.log('No mutual matches')
     return null;
   }
 
@@ -212,7 +217,7 @@ export default function MatchPage() {
               {/* Overlay for name and match percentage */}
               <div className="absolute top-0 left-0 w-full p-4 bg-gradient-to-b from-black/40 to-transparent text-white">
                 <h2 className="font-bold text-lg sm:text-xl">
-                  {matchUser.firstname}, {matches[currentIndex].score}% match
+                  {matchUser.firstname} is a match
                 </h2>
               </div>
 

@@ -11,7 +11,7 @@ export async function POST(request) {
 
 export async function GET(request) {
     
-    const userId = request.nextUrl.searchParams.get('userId');
+    const userId = request.nextUrl.searchParams.get('user');
     console.log(userId)
 
     if (!userId) {
