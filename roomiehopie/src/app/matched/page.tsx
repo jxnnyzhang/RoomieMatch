@@ -7,8 +7,7 @@ import { useProfile } from "../context/ProfileContext";
 import { userInfo } from "os";
 
 interface Match {
-  score: number;
-  user_id: string;
+  room_id: string;
 }
 
 export interface UserInfo {
@@ -98,21 +97,22 @@ export default function MatchPage() {
     async function loadMatches() {
       try {
         const userId = sessionStorage.getItem("userId");
-        if (!userId) throw new Error('No userId found');
-
-        const res = await fetch(
-          `/api/mutual_matches?userId=${encodeURIComponent(userId)}`,
-          { method: 'GET', headers: { 'Content-Type': 'application/json' } }
-        );
+  
+        console.log(userId)
+        if (!userId) {throw new Error('No userId found in sessionStorage');}
+  
+        const res = await fetch(`/api/mutual_matches?user=${encodeURIComponent(userId)}`, {
+          method: 'GET',
+          headers: {
+          'Content-Type': 'application/json',
+          },
+        })
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const raw: number[] = await res.json();     
 
-        const raw: { user_id: string; score: number }[] =
-          await res.json();
+        // 2. Map each numeric ID into a Match with room_id === that number
+        const data: Match[] = raw.map(id => ({room_id: id.toString(), }));
 
-        const data: Match[] = raw.map(({ user_id, score }) => ({
-          user_id: user_id,
-          score,
-        }));
         setMatches(data);
       } catch (err) {
         console.error(err);
@@ -123,9 +123,16 @@ export default function MatchPage() {
 
   useEffect(() => {
     if (!matches.length) return;
-
-    const { user_id } = matches[currentIndex];
-    fetch(`/api/user_id/${user_id}`, {
+    if(!matches[currentIndex]) 
+      {
+      alert("No more matches!");
+      return;
+    }
+    const {room_id } = matches[currentIndex];
+    console.log(room_id)
+    const case_email = sessionStorage.getItem("caseEmail");
+    if (!case_email) {throw new Error('No userId found in sessionStorage');}
+    fetch(`/api/user_id/${room_id}`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
     })
@@ -154,7 +161,10 @@ export default function MatchPage() {
     setIsFlipped(false);
   };
 
-  if (!mounted || !matchUser) return null;
+  if (!mounted || !matchUser) {
+    console.log('No mutual matches')
+    return null;
+  }
 
   return (
     <div className="relative min-h-screen bg-orange-200 flex flex-col items-center justify-center p-4">
@@ -199,8 +209,7 @@ export default function MatchPage() {
               {/* Name & match % */}
               <div className="absolute top-0 left-0 w-full p-4 bg-gradient-to-b from-black/40 to-transparent text-white">
                 <h2 className="font-bold text-lg sm:text-xl">
-                  {matchUser.firstname},{" "}
-                  {matches[currentIndex].score}% match
+                  {matchUser.firstname} is a match
                 </h2>
               </div>
 
